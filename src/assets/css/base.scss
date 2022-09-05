@@ -1,0 +1,73 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 列表没有左侧的点 */
+ul,
+li,
+ol {
+  list-style: none;
+}
+/* 高为 100vh */
+html,
+body,
+#app {
+  height: 100%;
+}
+/* #app设置相对定位 */
+#app {
+  position: relative;
+}
+/* 去除 a标签默认样式 */
+a {
+  text-decoration: none;
+}
+/* 按钮和输入框无ouline和border */
+input,
+button {
+  outline: none;
+  border: none;
+}
+/* 设置基础样式 */
+:root {
+  font-family: sans-serif;
+  color-scheme: light;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #000;
+  // text-align: left;
+}
+
+/* 取消rem的影响 */
+body {
+  font-size: 16px;
+}
+
+/* 设置滚动条 */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 100%;
+}
+*::-webkit-scrollbar-thumb {
+  width: 8px;
+  height: 24px;
+  border-radius: 4px;
+  background-color: transparentize(
+    $color: map-get($map: $gray-colors, $key: 400),
+    $amount: 0.25
+  );
+  &:hover {
+    background-color: transparentize(
+      $color: map-get($map: $green-colors, $key: 600),
+      $amount: 0
+    );
+  }
+}
+
+/* 设置h1 */
+h1 {
+  @include BigFont(36px);
+  font-weight: normal;
+}
