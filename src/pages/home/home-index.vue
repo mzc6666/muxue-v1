@@ -4,10 +4,11 @@
  * @Autor: mzc
  * @Date: 2022-08-04 20:20:06
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-02 16:57:20
+ * @LastEditTime: 2022-09-08 23:23:13
 -->
 <script setup lang="ts">
 import { DOWNLOAD, LOGIN } from "@constants/route";
+console.log("home show");
 </script>
 <template>
   <div class="container">

@@ -4,9 +4,11 @@
  * @Autor: mzc
  * @Date: 2022-08-04 17:00:05
  * @LastEditors: mzc
- * @LastEditTime: 2022-08-20 17:25:56
+ * @LastEditTime: 2022-09-08 23:20:58
 -->
-<script setup lang="ts"></script>
+<script setup lang="ts">
+console.log("App page");
+</script>
 <template>
   <router-view></router-view>
 </template>

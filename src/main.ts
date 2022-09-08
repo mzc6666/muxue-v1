@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-04 17:00:05
  * @LastEditors: mzc
- * @LastEditTime: 2022-08-22 20:29:17
+ * @LastEditTime: 2022-09-08 23:16:49
  */
 import "./assets/iconfont/iconfont.js";
 import { createApp } from "vue";
@@ -20,3 +20,4 @@ initFn(app);
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 app.use(pinia).use(router).use(naive).mount("#app");
+console.log("app begin");

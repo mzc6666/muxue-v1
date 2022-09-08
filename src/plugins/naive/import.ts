@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-04 17:41:28
  * @LastEditors: mzc
- * @LastEditTime: 2022-08-28 15:31:59
+ * @LastEditTime: 2022-09-08 17:40:25
  */
 import * as naive from "naive-ui";
 export const {
@@ -15,4 +15,6 @@ export const {
   NBreadcrumbItem,
   NCheckbox,
   NDropdown,
+  NAvatar,
+  NSpin,
 } = naive;

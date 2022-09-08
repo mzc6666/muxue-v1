@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-24 10:25:18
  * @LastEditors: mzc
- * @LastEditTime: 2022-08-31 21:07:10
+ * @LastEditTime: 2022-09-06 21:11:15
  */
 import { createDiscreteApi } from "naive-ui";
 
@@ -95,12 +95,12 @@ export const Notification = (
 
 export const Debounce = (fn: Function, delay: number) => {
   let timer: null | number = null;
-  return function () {
+  return function (...rest: any[]) {
     if (timer) {
       clearTimeout(timer);
     }
     timer = window.setTimeout(() => {
-      fn.apply(arguments);
+      fn(...rest);
     }, delay);
   };
 };

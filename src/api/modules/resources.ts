@@ -4,9 +4,10 @@
  * @Autor: mzc
  * @Date: 2022-08-21 16:05:55
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-03 15:30:50
+ * @LastEditTime: 2022-09-08 18:03:43
  */
 import { Delete, get, post } from "@apis/request";
+import { Ref } from "vue";
 
 /**
  * @description: 我的资源-获取顶级资源
@@ -157,7 +158,7 @@ export const deleteResource = (rId: number, events: Events = {}) => {
 export const giveLikeToResource = (rid: number, events: Events = {}) => {
   return get(
     {
-      url: "/resouce/up",
+      url: "/resource/up",
       params: {
         rid,
       },
@@ -214,7 +215,7 @@ export const getFolderContent = (id: number, events: Events = {}) => {
 /**
  * @description: 创建文件夹
  * @param { number } rId 资源ID
- * @param { number } folderId 文件夹ID
+ * @param { number } folderId 文件夹ID 为1则表示在rId下创建文件夹
  * @param { string } name 文件夹名称
  * @param {Events} events 事件对象
  * @return {*}
@@ -229,7 +230,7 @@ export const createFolder = (
 ) => {
   return post(
     {
-      url: "/resource/floder",
+      url: "/resource/folder",
       data: {
         rId,
         folderId,
@@ -292,7 +293,7 @@ export const getFolderInfo = (id: number, events: Events = {}) => {
 export const folderRename = (id: number, name: string, events: Events = {}) => {
   return post(
     {
-      url: "/resource/floder/rename",
+      url: "/resource/folder/rename",
       data: {
         id,
         name,
@@ -357,6 +358,146 @@ export const getFileInfo = (id: number, events: Events = {}) => {
     {
       url: "/resource/file",
       params: {
+        id,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 上传文件
+ * @param {File} file 上传的文件
+ * @param {1 | 2} type 1表示在资源下上传文件，2表示在文件夹下上传文件
+ * @param {number} id 资源/文件夹 ID
+ * @param {Events} events 事件对象
+ * @return {*}
+ * @author: mzc
+ */
+
+export const uploadFiles = (
+  file: File,
+  type: 1 | 2,
+  id: number,
+  events: Events = {}
+) => {
+  return post(
+    {
+      url: "/resource/file",
+      data: {
+        file,
+        type,
+        id,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 搜索
+ * @param {string} text 搜索内容
+ * @param {"r" | "f" | "file" | "" | Ref<"r" | "f" | "file" | "">} type 类型
+ * @param {Events} events 事件对象
+ * @return {*}
+ * @author: mzc
+ */
+
+export const searchThing = (
+  text: string,
+  type: "r" | "f" | "file" | "" | Ref<"r" | "f" | "file" | "">,
+  events: Events = {}
+) => {
+  return get(
+    {
+      url: "/resource/search",
+      params: {
+        text,
+        type,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 获取指定id的(文件、文件夹、资源)的路由
+ * @param {'r' | 'f' | 'file' | ''} type 所查找的类型
+ * @param {number} id ID值
+ * @param {Events} events 事件对象
+ * @return {*}
+ * @author: mzc
+ */
+
+export const getRoute = (
+  type: "r" | "f" | "file" | "",
+  id: number,
+  events: Events = {}
+) => {
+  return get(
+    {
+      url: "/resource/route",
+      params: {
+        type,
+        id,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 获取评论
+ * @param {number} id 资源ID
+ * @param {Events} events 事件对象
+ * @return {*}
+ * @author: mzc
+ */
+
+export const getResourceComment = (id: number, events: Events = {}) => {
+  return get(
+    {
+      url: "/resource/comment",
+      params: {
+        id,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 获取子评论
+ * @param {number} id 顶级评论的ID
+ * @param {Events} events 事件对象
+ * @return {*}
+ * @author: mzc
+ */
+
+export const getSonCommentList = (id: number, events: Events = {}) => {
+  return get(
+    {
+      url: "/resource/comment/sons",
+      params: {
+        id,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 给评论点赞
+ * @param {number} id 评论的ID
+ * @param {Events} events 事件对象
+ * @return {*}
+ * @author: mzc
+ */
+export const giveLikeToComment = (id: number, events: Events = {}) => {
+  return post(
+    {
+      url: "/resource/comment/giveLike",
+      data: {
         id,
       },
     },

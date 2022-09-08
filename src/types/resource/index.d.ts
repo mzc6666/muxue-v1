@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-28 16:52:47
  * @LastEditors: mzc
- * @LastEditTime: 2022-08-29 23:02:25
+ * @LastEditTime: 2022-09-07 10:54:52
  */
 declare interface PermissionEvents {
   onDownload?: () => void;
@@ -31,3 +31,20 @@ declare interface DropDownItem {
 }
 
 declare function DropDownFn(): DropDownItem;
+
+// id集合， useResourceStore -use
+declare interface groupId {
+  sId?: number | null;
+  foId?: number | null;
+}
+
+declare interface singlePath {
+  path: {
+    name: string;
+    params?: {
+      sId: number;
+      foId?: number;
+    };
+  };
+  text: string;
+}

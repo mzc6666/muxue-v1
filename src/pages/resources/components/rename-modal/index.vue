@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-31 21:54:54
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-03 14:22:11
+ * @LastEditTime: 2022-09-07 21:35:27
 -->
 <script setup lang="ts">
 import Modal from "@components/Modal/index.vue";
@@ -13,7 +13,6 @@ import { ref, watch, watchEffect } from "vue";
 
 const props = withDefaults(
   defineProps<{
-    show: boolean;
     type: "r" | "f" | "file"; // r --> 新建资源;  f --> 新建文件夹
     initName: string;
   }>(),
@@ -55,7 +54,7 @@ const handleActiveClick = () => {
 </script>
 <template>
   <Modal
-    :show="show"
+    show
     title="重命名"
     v-bind="$attrs"
     @active-btn-click="handleActiveClick"

@@ -4,10 +4,10 @@
  * @Autor: mzc
  * @Date: 2022-08-22 09:38:40
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-03 16:20:35
+ * @LastEditTime: 2022-09-07 21:50:20
 -->
 <script setup lang="ts">
-import { computed, reactive } from "vue";
+import { computed, reactive, ref } from "vue";
 import FolderBox from "../components/folder-box/index.vue";
 import FileBox from "../components/file-box/index.vue";
 import CreateDropdown from "../components/create-dropdown/index.vue";
@@ -15,6 +15,7 @@ import CreateModal from "../components/create-modal/index.vue";
 import SelectControl from "../components/select-control/index.vue";
 import ViewDetails from "../components/view-details/index.vue";
 import RenameModal from "../components/rename-modal/index.vue";
+import SearchModal from "../components/search-modal/index.vue";
 import router from "@/route";
 import { useResourcesStore } from "@/store";
 import { MAIN_RESOURCE_FOLDERITEM } from "@constants/route";
@@ -26,14 +27,16 @@ import {
   fileRename,
   fileDelete,
   getFolderContent,
+  uploadFiles,
 } from "@apis/modules/resources";
 import { Message, Dialog } from "@/utils/public";
+import { buildFileTreeStruct, createFullFolder } from "@/utils/resources";
 
 const resourceStore = useResourcesStore();
 
 const props = defineProps<{
   sId: number;
-  fId: number;
+  foId: number;
 }>();
 
 const fLists = reactive<any>([]);
@@ -90,6 +93,9 @@ const rename = reactive<{
   order: 0,
 });
 
+// 搜索数据
+const searchShow = ref(false);
+
 /**
  * @description: 获取数据函数
  * @return {*}
@@ -102,7 +108,7 @@ const getContent = async () => {
   fSelects.splice(0, fSelects.length);
   fileSelects.splice(0, fileSelects.length);
   try {
-    const result = await getFolderContent(props.fId);
+    const result = await getFolderContent(props.foId);
     fLists.push(...result.data.data.folders);
     files.push(...result.data.data.files);
     fSelects.push(...new Array(result.data.data.folders.length).fill(false));
@@ -115,7 +121,7 @@ getContent();
 
 const records: any = resourceStore.getRecordFromMap({
   sId: props.sId,
-  fId: props.fId,
+  foId: props.foId,
 });
 
 /**
@@ -126,17 +132,17 @@ const records: any = resourceStore.getRecordFromMap({
  * @author: mzc
  */
 
-const handleFolderEnter = (fId: number, text: string) => {
+const handleFolderEnter = (foId: number, text: string) => {
   const path = {
     name: MAIN_RESOURCE_FOLDERITEM,
     params: {
-      fId,
+      foId,
       sId: props.sId,
     },
   };
   resourceStore.addRecordToMap(
     {
-      fId,
+      foId,
       sId: props.sId,
     },
     [
@@ -350,6 +356,47 @@ const handleFileDelete = (id: number, index: number) => {
     },
   });
 };
+
+/**
+ * @description: 上传文件
+ * @param { FileList } files 文件
+ * @return {*}
+ * @author: mzc
+ */
+
+const submitFiles = (files: FileList) => {
+  Dialog("warning", {
+    title: "上传提醒",
+    content: "确定上传?",
+    positiveText: "确定",
+    negativeText: "取消",
+    onPositiveClick: () => {
+      const arr = [];
+      for (let i = 0; i < files.length; i++) {
+        arr.push(uploadFiles(files[i], 2, props.foId));
+      }
+      Promise.all(arr)
+        .then((res) => {
+          Message("success", res[0].data.msg);
+          getContent();
+        })
+        .catch((err) => {
+          console.log("Promise.all uploadFiles error", err);
+        });
+    },
+  });
+};
+
+/**
+ * @description: 上传文件夹
+ * @param { FileList } files 文件列表
+ * @return {*}
+ * @author: mzc
+ */
+const handleFolderUpload = (files: FileList) => {
+  const [topDireName, treeObj] = buildFileTreeStruct(files);
+  createFullFolder(props.sId, 2, topDireName, treeObj).then(getContent);
+};
 </script>
 <template>
   <header>
@@ -367,15 +414,21 @@ const handleFileDelete = (id: number, index: number) => {
       </n-breadcrumb>
     </div>
     <div class="fns">
-      <svg-icon className="icon-sousuo" class="search-icon"></svg-icon>
+      <svg-icon
+        className="icon-sousuo"
+        class="search-icon"
+        @click="searchShow = true"
+      ></svg-icon>
       <CreateDropdown
         type="folder"
-        :on-new-folder="
+        @on-new-folder="
           () => {
             createOptions.type = 'f';
             createOptions.show = true;
           }
         "
+        @on-upload-file="submitFiles"
+        @on-upload-folder="handleFolderUpload"
       />
     </div>
   </header>
@@ -464,26 +517,31 @@ const handleFileDelete = (id: number, index: number) => {
   </main>
   <!-- 创建(资源、文件夹) 模态框 -->
   <CreateModal
-    v-model:show="createOptions.show"
+    v-if="createOptions.show"
     :type="createOptions.type"
+    @update:show="createOptions.show = false"
     @create-resource="createNewResource"
     @create-folder="createNewFolder"
   />
   <!-- 查看详情(资源、文件夹) 模态框 -->
   <ViewDetails
-    v-model:show="detail.show"
+    v-if="detail.show"
     :id="detail.id"
     :type="detail.type"
     :title="detail.title"
+    @update:show="detail.show = false"
   />
   <!-- 资源重命名 模态框 -->
   <RenameModal
-    v-model:show="rename.show"
+    v-if="rename.show"
     :init-name="rename.initName"
     :type="rename.type"
+    @update:show="rename.show = false"
     @folder-rename="handleFolderRename"
     @file-rename="handleFileRename"
   />
+  <!-- 搜索 modal -->
+  <SearchModal v-if="searchShow" @update:show="searchShow = false" />
 </template>
 <style lang="scss" scoped>
 @mixin horizonalFlex {

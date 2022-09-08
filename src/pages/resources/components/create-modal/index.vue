@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-30 16:20:35
  * @LastEditors: mzc
- * @LastEditTime: 2022-08-31 22:31:08
+ * @LastEditTime: 2022-09-07 21:30:12
 -->
 <script setup lang="ts">
 import Modal from "@components/Modal/index.vue";
@@ -13,7 +13,6 @@ import { ref, watch, watchEffect } from "vue";
 
 const props = withDefaults(
   defineProps<{
-    show: boolean; // 是否显示
     type: "r" | "f"; // r --> 新建资源;  f --> 新建文件夹
   }>(),
   {}
@@ -24,9 +23,15 @@ const title = ref(props.type === "f" ? "新建文件夹" : "新建资源");
 
 const name = ref("");
 
-watch(props, () => {
-  name.value = props.type === "f" ? "新建文件夹" : "新建资源";
-});
+watch(
+  props,
+  () => {
+    name.value = props.type === "f" ? "新建文件夹" : "新建资源";
+  },
+  {
+    immediate: true,
+  }
+);
 
 /**
  * @description: 确定按钮回调
@@ -52,7 +57,7 @@ const handleNegativeClick = () => {
 </script>
 <template>
   <Modal
-    :show="show"
+    show
     v-bind="$attrs"
     @active-btn-click="handleActiveClick"
     @negative-btn-click="handleNegativeClick"

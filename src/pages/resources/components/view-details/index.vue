@@ -4,26 +4,32 @@
  * @Autor: mzc
  * @Date: 2022-08-30 16:07:57
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-02 17:11:08
+ * @LastEditTime: 2022-09-08 09:44:25
 -->
 <script setup lang="ts">
 import Modal from "@components/Modal/index.vue";
+import ViewComments from "../view-comments/index.vue";
 import { useInfo } from "@/hooks/modules/resource";
-import { isRef, ref, watch, watchEffect } from "vue";
+import { ref, watch, watchEffect } from "vue";
 import { computed } from "@vue/reactivity";
 import { getTimeString, Message } from "@/utils/public";
-import { giveLikeToResource, resourceCollect } from "@apis/modules/resources";
+import {
+  giveLikeToResource,
+  resourceCollect,
+  getResourceComment,
+} from "@apis/modules/resources";
 import { Throttle } from "@/utils/public";
 
 const props = withDefaults(
   defineProps<{
     type: "r" | "f" | "file"; // r --> 资源; f --> 文件夹; file --> 文件
     id: number;
-    show: boolean;
     title: string;
   }>(),
   {}
 );
+
+const emits = defineEmits(["update:show"]);
 
 const reqId = ref(0);
 const reqType = ref<any>(null);
@@ -102,13 +108,16 @@ const handleResourceCollect = Throttle(async () => {
     console.log("resourceCollect error", err);
   }
 }, 1000);
+
+// 是否展示评论
+const commentShow = ref(false);
 </script>
 <template>
   <Modal
-    :show="show && data !== null"
+    :show="data !== null"
     :title="title"
     @update:show="$emit('update:show', false)"
-    style="max-width: 340px"
+    :style="{ 'max-width': '340px' }"
   >
     <template #body>
       <section>
@@ -129,7 +138,11 @@ const handleResourceCollect = Throttle(async () => {
               <p>{{ data?.likes }}</p>
             </li>
             <li>
-              <svg-icon className="icon-31pinglun" class="icon"></svg-icon>
+              <svg-icon
+                className="icon-31pinglun"
+                class="icon"
+                @click="commentShow = true"
+              ></svg-icon>
               <p>{{ data?.commentCount }}</p>
             </li>
             <li>
@@ -173,6 +186,12 @@ const handleResourceCollect = Throttle(async () => {
       <span></span>
     </template>
   </Modal>
+  <!-- 评论 -->
+  <ViewComments
+    v-if="commentShow"
+    :id="id"
+    @update:show="commentShow = false"
+  />
 </template>
 <style scoped lang="scss">
 section {

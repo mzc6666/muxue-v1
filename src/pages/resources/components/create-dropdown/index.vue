@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-28 20:24:01
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-02 19:03:49
+ * @LastEditTime: 2022-09-05 23:04:56
 -->
 <script setup lang="ts">
 import { useEvent } from "@/hooks";
@@ -28,6 +28,13 @@ const props = withDefaults(
   }
 );
 
+const emits = defineEmits([
+  "onNewResource",
+  "onNewFolder",
+  "onUploadFolder",
+  "onUploadFile",
+]);
+
 const rights = reactive<Array<number>>([]);
 if (props.topest === true && props.type === "resource") {
   rights.push(1);
@@ -42,25 +49,49 @@ const allPermissions = reactive([
     id: 1,
     text: "新建资源",
     icon: "icon-icon-test",
-    onclick: props.onNewResource,
+    onclick: () => {
+      emits("onNewResource");
+    },
   },
   {
     id: 2,
     text: "新建文件夹",
     icon: "icon-24gl-folderOpen",
-    onclick: props.onNewFolder,
+    onclick: () => {
+      emits("onNewFolder");
+    },
   },
   {
     id: 3,
     text: "上传文件夹",
     icon: "icon-wenjianjia",
-    onclick: props.onUploadFolder,
+    onclick: () => {
+      // emits("onUploadFolder");
+      const input = document.createElement("input");
+      input.type = "file";
+      input.formEnctype = "multipart/form-data";
+      input.webkitdirectory = true;
+      input.click();
+      input.onchange = (e: any) => {
+        emits("onUploadFolder", e.target.files);
+      };
+    },
   },
   {
     id: 4,
     text: "上传文件",
     icon: "icon-wendangicon",
-    onclick: props.onUploadFile,
+    onclick: () => {
+      const newInput = document.createElement("input");
+      newInput.type = "file";
+      newInput.multiple = true;
+      newInput.formEnctype = "multipart/form-data";
+      newInput.click();
+      newInput.onchange = function (e: any) {
+        emits("onUploadFile", e.target.files);
+        console.log(e.target.files);
+      };
+    },
   },
 ]);
 

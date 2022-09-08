@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-25 17:11:51
  * @LastEditors: mzc
- * @LastEditTime: 2022-08-31 22:51:10
+ * @LastEditTime: 2022-09-08 10:07:53
 -->
 <script lang="ts">
 export default {
@@ -18,16 +18,22 @@ const props = withDefaults(
   defineProps<{
     show: boolean;
     maskClose?: boolean;
-    title: string;
+    title?: string;
     activeText?: string;
     negativeText?: string;
     hasNegative?: boolean;
+    maskBackground?: string;
+    hasHeader?: boolean;
+    hasFooter?: boolean;
   }>(),
   {
     maskClose: true,
     activeText: "确定",
     negativeText: "取消",
     hasNegative: false,
+    maskBackground: "rgba(0, 0, 0, 0.35)",
+    hasHeader: true,
+    hasFooter: true,
   }
 );
 
@@ -38,9 +44,9 @@ const emits = defineEmits([
 ]);
 </script>
 <template>
-  <Transition name="toggle">
+  <Transition name="toggle" v-if="show">
     <Teleport to="body">
-      <div class="modal" v-if="show">
+      <div class="modal">
         <div
           class="mask"
           @click="
@@ -50,9 +56,10 @@ const emits = defineEmits([
               }
             }
           "
+          :style="{ backgroundColor: maskBackground }"
         ></div>
         <section v-bind="$attrs">
-          <header>
+          <header v-if="hasHeader">
             <slot name="header">{{ title }}</slot>
             <svg-icon
               className="icon-guanbi"
@@ -63,7 +70,7 @@ const emits = defineEmits([
           <main>
             <slot name="body"></slot>
           </main>
-          <footer>
+          <footer v-if="hasFooter">
             <slot name="footer">
               <div class="btns">
                 <Button
@@ -104,6 +111,7 @@ const emits = defineEmits([
     header {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       .close-class {
         cursor: pointer;
       }
@@ -124,7 +132,6 @@ const emits = defineEmits([
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.35);
   }
 }
 </style>

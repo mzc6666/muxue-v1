@@ -4,13 +4,11 @@
  * @Autor: mzc
  * @Date: 2022-08-08 15:10:16
  * @LastEditors: mzc
- * @LastEditTime: 2022-08-25 15:04:06
+ * @LastEditTime: 2022-09-08 23:07:06
 -->
 <script setup lang="ts">
 import {
-  MAIN_RESOURCE,
   MAIN_BACKLOG,
-  LOGIN,
   MAIN_CHATTING,
   MAIN_COURSE,
   MAIN_STUDYROOM,
@@ -18,7 +16,6 @@ import {
   MAIN_COMMUNITY,
   MAIN_RESOURCE_MYRESOURCE,
 } from "@constants/route";
-import RouteLink from "./component/route-link/index.vue";
 import { useRoute } from "vue-router";
 import { computed } from "@vue/reactivity";
 const route = useRoute();
@@ -35,86 +32,128 @@ const fullPath = computed(() => {
         </section>
         <ul>
           <li>
-            <route-link :to="{ name: MAIN_RESOURCE_MYRESOURCE }">
-              <template #icon>
+            <router-link
+              :to="{ name: MAIN_RESOURCE_MYRESOURCE }"
+              custom
+              v-slot="{ isActive, navigate, href }"
+            >
+              <a
+                :href="href"
+                @click="navigate"
+                :class="[isActive ? 'active' : 'no-active', 'route-a']"
+              >
                 <svg-icon
                   className="icon-icon-test"
                   class="item-icon"
                 ></svg-icon>
-              </template>
-              <template #text>
                 <span class="item-text">我的资源</span>
-              </template>
-            </route-link>
+              </a>
+            </router-link>
           </li>
           <li>
-            <route-link :to="{ name: MAIN_BACKLOG }">
-              <template #icon>
+            <router-link
+              :to="{ name: MAIN_BACKLOG }"
+              custom
+              v-slot="{ isActive, navigate, href }"
+            >
+              <a
+                :href="href"
+                @click="navigate"
+                :class="[isActive ? 'active' : 'no-active', 'route-a']"
+              >
                 <svg-icon
                   className="icon-renwujihua"
                   class="item-icon"
                 ></svg-icon>
-              </template>
-              <template #text>
                 <span class="item-text">待办计划</span>
-              </template>
-            </route-link>
+              </a>
+            </router-link>
           </li>
           <li>
-            <route-link :to="{ name: MAIN_CHATTING }">
-              <template #icon>
+            <router-link
+              :to="{ name: MAIN_CHATTING }"
+              custom
+              v-slot="{ isActive, navigate, href }"
+            >
+              <a
+                :href="href"
+                @click="navigate"
+                :class="[isActive ? 'active' : 'no-active', 'route-a']"
+              >
                 <svg-icon className="icon-xueyuan" class="item-icon"></svg-icon>
-              </template>
-              <template #text>
                 <span class="item-text">聊天</span>
-              </template>
-            </route-link>
+              </a>
+            </router-link>
           </li>
           <li>
-            <route-link :to="{ name: MAIN_COURSE }">
-              <template #icon>
+            <router-link
+              :to="{ name: MAIN_COURSE }"
+              custom
+              v-slot="{ isActive, navigate, href }"
+            >
+              <a
+                :href="href"
+                @click="navigate"
+                :class="[isActive ? 'active' : 'no-active', 'route-a']"
+              >
                 <svg-icon
                   className="icon-wodekecheng"
                   class="item-icon"
                 ></svg-icon>
-              </template>
-              <template #text>
                 <span class="item-text">课程</span>
-              </template>
-            </route-link>
+              </a>
+            </router-link>
           </li>
           <li>
-            <route-link :to="{ name: MAIN_STUDYROOM }">
-              <template #icon>
+            <router-link
+              :to="{ name: MAIN_STUDYROOM }"
+              custom
+              v-slot="{ isActive, navigate, href }"
+            >
+              <a
+                :href="href"
+                @click="navigate"
+                :class="[isActive ? 'active' : 'no-active', 'route-a']"
+              >
                 <svg-icon
                   className="icon-xueyuan-xuexizhong"
                   class="item-icon"
                 ></svg-icon>
-              </template>
-              <template #text>
                 <span class="item-text">自习室</span>
-              </template>
-            </route-link>
+              </a>
+            </router-link>
           </li>
           <li>
-            <route-link :to="{ name: MAIN_RESOURCESQUARE }">
-              <template #icon>
+            <router-link
+              :to="{ name: MAIN_RESOURCESQUARE }"
+              custom
+              v-slot="{ isActive, navigate, href }"
+            >
+              <a
+                :href="href"
+                @click="navigate"
+                :class="[isActive ? 'active' : 'no-active', 'route-a']"
+              >
                 <svg-icon className="icon-ziyuan" class="item-icon"></svg-icon>
-              </template>
-              <template #text>
                 <span class="item-text">资源广场</span>
-              </template>
-            </route-link>
+              </a>
+            </router-link>
           </li>
           <li>
-            <route-link :to="{ name: MAIN_COMMUNITY }">
-              <template #icon>
+            <router-link
+              :to="{ name: MAIN_COMMUNITY }"
+              custom
+              v-slot="{ isActive, navigate, href }"
+            >
+              <a
+                :href="href"
+                @click="navigate"
+                :class="[isActive ? 'active' : 'no-active', 'route-a']"
+              >
                 <svg-icon className="icon-shequ" class="item-icon"></svg-icon>
-              </template>
-              <template #text>
                 <span class="item-text">社区</span>
-              </template>
-            </route-link>
+              </a>
+            </router-link>
           </li>
         </ul>
       </article>
@@ -149,6 +188,22 @@ main {
       ul {
         li {
           margin: 6px 0;
+          .route-a {
+            display: block;
+            margin: 0 10px;
+            padding: 6px 0;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            border-radius: 5px;
+            transition: background 0.3s ease-in-out;
+            &.active {
+              background-color: $green-03;
+            }
+            &.no-active {
+              background-color: transparent;
+            }
+          }
           .item-icon {
             color: #fff;
             font-size: 24px;

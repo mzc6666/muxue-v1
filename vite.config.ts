@@ -4,9 +4,9 @@
  * @Autor: mzc
  * @Date: 2022-08-04 17:00:05
  * @LastEditors: mzc
- * @LastEditTime: 2022-08-05 22:26:36
+ * @LastEditTime: 2022-09-08 23:38:49
  */
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 
 // https://vitejs.dev/config/

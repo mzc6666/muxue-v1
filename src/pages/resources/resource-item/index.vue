@@ -4,10 +4,10 @@
  * @Autor: mzc
  * @Date: 2022-08-20 13:53:20
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-03 16:21:34
+ * @LastEditTime: 2022-09-07 21:44:10
 -->
 <script setup lang="ts">
-import { computed, reactive } from "vue";
+import { computed, reactive, ref } from "vue";
 import ResourceBox from "../components/resource-box/index.vue";
 import FolderBox from "../components/folder-box/index.vue";
 import FileBox from "../components/file-box/index.vue";
@@ -16,6 +16,7 @@ import CreateModal from "../components/create-modal/index.vue";
 import SelectControl from "../components/select-control/index.vue";
 import ViewDetails from "../components/view-details/index.vue";
 import RenameModal from "../components/rename-modal/index.vue";
+import SerachModal from "../components/search-modal/index.vue";
 import router from "@/route";
 import { useResourcesStore } from "@/store";
 import { getResourceContent } from "@/api/modules/resources";
@@ -34,8 +35,10 @@ import {
   deleteFolder,
   fileRename,
   fileDelete,
+  uploadFiles,
 } from "@apis/modules/resources";
 import { Message, Dialog } from "@/utils/public";
+import { buildFileTreeStruct, createFullFolder } from "@/utils/resources";
 
 const resourceStore = useResourcesStore();
 
@@ -102,6 +105,9 @@ const rename = reactive<{
   order: 0,
 });
 
+// 搜搜框显示
+const searchShow = ref(false);
+
 /**
  * @description: 获取数据函数
  * @return {*}
@@ -160,23 +166,23 @@ const handleResourceEnter = (sId: number, text: string) => {
 
 /**
  * @description: 进入文件夹处理函数
- * @param {*} fId 文件夹id
+ * @param {*} foId 文件夹id
  * @param {*} text 文件名
  * @return {*}
  * @author: mzc
  */
 
-const handleFolderEnter = (fId: number, text: string) => {
+const handleFolderEnter = (foId: number, text: string) => {
   const path = {
     name: MAIN_RESOURCE_FOLDERITEM,
     params: {
-      fId,
+      foId,
       sId: props.sId,
     },
   };
   resourceStore.addRecordToMap(
     {
-      fId,
+      foId,
       sId: props.sId,
     },
     [
@@ -376,7 +382,6 @@ const createNewResource = (name: string) => {
  */
 
 const createNewFolder = (name: string) => {
-  console.log(name);
   createFolder(props.sId, 1, name)
     .then((res) => {
       if (res.data.code == "200") {
@@ -507,6 +512,47 @@ const handleFileDelete = (id: number, index: number) => {
     },
   });
 };
+
+/**
+ * @description: 上传文件
+ * @param { FileList } files 文件
+ * @return {*}
+ * @author: mzc
+ */
+
+const submitFiles = (files: FileList) => {
+  Dialog("warning", {
+    title: "上传提醒",
+    content: "确定上传?",
+    positiveText: "确定",
+    negativeText: "取消",
+    onPositiveClick: () => {
+      const arr = [];
+      for (let i = 0; i < files.length; i++) {
+        arr.push(uploadFiles(files[i], 1, props.sId));
+      }
+      Promise.all(arr)
+        .then((res) => {
+          Message("success", res[0].data.msg);
+          getContent();
+        })
+        .catch((err) => {
+          console.log("Promise.all uploadFiles error", err);
+        });
+    },
+  });
+};
+
+/**
+ * @description: 上传文件夹
+ * @param { FileList } files 文件列表
+ * @return {*}
+ * @author: mzc
+ */
+const handleFolderUpload = (files: FileList) => {
+  const [topDireName, treeObj] = buildFileTreeStruct(files);
+  createFullFolder(props.sId, 1, topDireName, treeObj).then(getContent);
+};
 </script>
 <template>
   <header>
@@ -524,21 +570,28 @@ const handleFileDelete = (id: number, index: number) => {
       </n-breadcrumb>
     </div>
     <div class="fns">
-      <svg-icon className="icon-sousuo" class="search-icon"></svg-icon>
+      <svg-icon
+        className="icon-sousuo"
+        class="search-icon"
+        @click="searchShow = true"
+      >
+      </svg-icon>
       <CreateDropdown
         type="resource"
-        :on-new-folder="
+        @on-new-folder="
           () => {
             createOptions.type = 'f';
             createOptions.show = true;
           }
         "
-        :on-new-resource="
+        @on-new-resource="
           () => {
             createOptions.type = 'r';
             createOptions.show = true;
           }
         "
+        @on-upload-file="submitFiles"
+        @on-upload-folder="handleFolderUpload"
       />
     </div>
   </header>
@@ -656,27 +709,32 @@ const handleFileDelete = (id: number, index: number) => {
   </main>
   <!-- 创建(资源、文件夹) 模态框 -->
   <CreateModal
-    v-model:show="createOptions.show"
+    v-if="createOptions.show"
     :type="createOptions.type"
+    @update:show="createOptions.show = false"
     @create-resource="createNewResource"
     @create-folder="createNewFolder"
   />
   <!-- 查看详情(资源、文件夹) 模态框 -->
   <ViewDetails
-    v-model:show="detail.show"
+    v-if="detail.show"
     :id="detail.id"
     :type="detail.type"
     :title="detail.title"
+    @update:show="detail.show = false"
   />
   <!-- 资源重命名 模态框 -->
   <RenameModal
-    v-model:show="rename.show"
+    v-if="rename.show"
     :init-name="rename.initName"
     :type="rename.type"
+    @update:show="rename.show = false"
     @resource-rename="handleResourceRename"
     @folder-rename="handleFolderRename"
     @file-rename="handleFileRename"
   />
+  <!-- 搜索框 -->
+  <SerachModal v-if="searchShow" @update:show="searchShow = false" />
 </template>
 <style scoped lang="scss">
 @mixin horizonalFlex {

@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-28 14:32:25
  * @LastEditors: mzc
- * @LastEditTime: 2022-08-31 21:29:35
+ * @LastEditTime: 2022-09-06 21:20:14
  */
 import {
   getResourceInfo,
@@ -63,14 +63,4 @@ export const useInfo = (
     data,
     error,
   };
-};
-
-export const useTest = (val: Ref<number> | number) => {
-  const value = ref<any>(0);
-  if (isRef(val)) {
-    watchEffect(() => {
-      value.value = 2 * val.value;
-    });
-  }
-  return { value };
 };

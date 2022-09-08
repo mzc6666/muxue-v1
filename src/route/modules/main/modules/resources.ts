@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-20 13:34:28
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-02 21:09:13
+ * @LastEditTime: 2022-09-07 10:53:54
  */
 import { RouteRecordRaw } from "vue-router";
 import {
@@ -37,11 +37,11 @@ const resources: RouteRecordRaw[] = [
         }),
       },
       {
-        path: "resource/:sId(\\d+)/folder/:fId(\\d+)",
+        path: "resource/:sId(\\d+)/folder/:foId(\\d+)",
         name: MAIN_RESOURCE_FOLDERITEM,
         component: () => import("@pages/resources/folder-item/index.vue"),
         props: (to) => ({
-          fId: parseInt(to.params.fId as string),
+          foId: parseInt(to.params.foId as string),
           sId: parseInt(to.params.sId as string),
         }),
       },

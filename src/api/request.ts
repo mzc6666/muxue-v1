@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-04 21:11:37
  * @LastEditors: mzc
- * @LastEditTime: 2022-08-24 10:30:06
+ * @LastEditTime: 2022-09-05 17:36:50
  */
 import axios, { Axios, AxiosRequestConfig } from "axios";
 import {
@@ -27,7 +27,7 @@ import { Message } from "@/utils/public";
  */
 export const request = function (config: AxiosRequestConfig, events: Events) {
   // 配置请求拦截器
-  const instances = axios.create();
+  const instances = axios.create(config);
   instances.interceptors.request.use(
     function (config: any) {
       // 添加token

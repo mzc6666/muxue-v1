@@ -4,10 +4,10 @@
  * @Autor: mzc
  * @Date: 2022-08-20 13:52:24
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-03 16:04:54
+ * @LastEditTime: 2022-09-07 21:38:29
 -->
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import {
   getUserTopResources,
   resourceLock,
@@ -26,6 +26,7 @@ import CreateDropdown from "./components/create-dropdown/index.vue";
 import CreateModal from "./components/create-modal/index.vue";
 import ViewDetails from "../resources/components/view-details/index.vue";
 import RenameModal from "../resources/components/rename-modal/index.vue";
+import SearchModal from "../resources/components/search-modal/index.vue";
 import { Dialog, Message } from "@/utils/public";
 
 const resourceStore = useResourcesStore();
@@ -46,6 +47,9 @@ const detail = reactive<{
   type: "r",
   title: "",
 });
+
+// 搜索
+const searchShow = ref(false);
 
 // 重命名
 const rename = reactive<{
@@ -294,8 +298,16 @@ const onCollect = async (id: number, index: number) => {
       </n-breadcrumb>
     </div>
     <div class="fns">
-      <svg-icon className="icon-sousuo" class="search-icon"></svg-icon>
-      <CreateDropdown type="resource" :on-new-resource="modalShow" topest />
+      <svg-icon
+        className="icon-sousuo"
+        class="search-icon"
+        @click="searchShow = true"
+      ></svg-icon>
+      <CreateDropdown
+        type="resource"
+        @on-new-resource="modal1.show = true"
+        topest
+      />
     </div>
   </header>
   <main>
@@ -356,24 +368,29 @@ const onCollect = async (id: number, index: number) => {
   </main>
   <!-- 创建资源 -->
   <CreateModal
-    v-model:show="modal1.show"
+    v-if="modal1.show"
+    @update:show="modal1.show = false"
     type="r"
     @create-resource="createNewResource"
   />
   <!-- 查看详情 -->
   <ViewDetails
-    v-model:show="detail.show"
+    v-if="detail.show"
     :id="detail.id"
     :type="detail.type"
     :title="detail.title"
+    @update:show="detail.show = false"
   />
   <!-- 资源重命名 -->
   <RenameModal
-    v-model:show="rename.show"
+    v-if="rename.show"
     :init-name="rename.initName"
     :type="rename.type"
     @resource-rename="handleResourceRename"
+    @update:show="rename.show = false"
   />
+  <!-- 搜索框 -->
+  <SearchModal v-if="searchShow" @update:show="searchShow = false" />
 </template>
 <style scoped lang="scss">
 @mixin horizonalFlex {
