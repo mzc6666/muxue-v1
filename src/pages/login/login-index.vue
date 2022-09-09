@@ -29,6 +29,7 @@ const login_authCode = reactive({
     ) {
       loginByAuthCode(login_authCode.telephone, login_authCode.authCode)
         .then((res) => {
+          console.log("loginByAuthCode res",res);
           if (nextAutoLogin.value) {
             window.localStorage.setItem("token", res.data.data);
           }
@@ -50,7 +51,7 @@ const login_pass = reactive({
     if (verifyTel(login_pass.telephone) && verifyPass(login_pass.password)) {
       LoginByPassword(login_pass.telephone, login_pass.password)
         .then((res) => {
-          console.log("res", res);
+          console.log("LoginByPassword res", res);
           if (nextAutoLogin.value) {
             window.localStorage.setItem("token", res.data.data);
           }
@@ -80,17 +81,21 @@ const verifyTel = (tel: string) =>
   );
 // 密码的验证函数
 const verifyPass = (password: string) => {
-  const reg =
-    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[`~!@#$%^&*()_+<>?:"{},.\/\\;'[\]])[A-Za-z\d`~!@#$%^&*()_+<>?:"{},.\/\\;'[\]]{8,}$/;
-  return reg.test(password);
+  // const reg =
+  //   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[`~!@#$%^&*()_+<>?:"{},.\/\\;'[\]])[A-Za-z\d`~!@#$%^&*()_+<>?:"{},.\/\\;'[\]]{8,}$/;
+  // return reg.test(password);
+  return true;
 };
 // 短信验证码的验证函数
 const verifyAuthCode = (value: string) => /^\d{6}$/.test(value);
 const msg = ref("发送验证码");
 const clickable = ref(true);
 const handleBtnClick = () => {
+  
   if (verifyTel(login_authCode.telephone)) {
+    // console.log("telephone format is right");
     getAuthCode(login_authCode.telephone).then((res: any) => {
+      console.log("getAuthCode result",res)
       if (res.data.code === "200") {
         clickable.value = false;
         let time = 59;

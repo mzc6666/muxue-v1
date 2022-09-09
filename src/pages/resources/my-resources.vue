@@ -77,6 +77,7 @@ const getResourceSync = async () => {
   selectList.splice(0, selectList.length);
   try {
     const result = await getUserTopResources();
+    console.log("getUserTopResources result",result)
     resources.push(...result.data.data);
     selectList.push(...Array(resources.length).fill(false));
   } catch (err) {
@@ -254,9 +255,9 @@ const handleResourceRename = (name: string) => {
 const onPublic = async (id: number, index: number) => {
   try {
     const result = await resourceLock(id);
-    result.data.msg === "公开成功"
-      ? (resources[index].isPublic = 2)
-      : (resources[index].isPublic = 1);
+    if (result.data.code === '200') {
+      resources[index].isPublic === 1 ? resources[index].isPublic = 2 : resources[index].isPublic = 1;
+    }
     Message("success", result.data.msg);
   } catch (err) {
     console.log("resourceLock error", err);
@@ -273,9 +274,9 @@ const onPublic = async (id: number, index: number) => {
 const onCollect = async (id: number, index: number) => {
   try {
     const result = await resourceCollect(id);
-    result.data.msg === "收藏成功"
-      ? (resources[index].isCollection = true)
-      : (resources[index].isCollection = false);
+    if (result.data.code === '200') {
+      resources[index].isCollection = !resources[index].isCollection;
+    }
     Message("success", result.data.msg);
   } catch (err) {
     console.log("resourceCollect error", err);
@@ -367,12 +368,12 @@ const onCollect = async (id: number, index: number) => {
     </div>
   </main>
   <!-- 创建资源 -->
-  <CreateModal
+  <!-- <CreateModal
     v-if="modal1.show"
     @update:show="modal1.show = false"
     type="r"
     @create-resource="createNewResource"
-  />
+  /> -->
   <!-- 查看详情 -->
   <ViewDetails
     v-if="detail.show"

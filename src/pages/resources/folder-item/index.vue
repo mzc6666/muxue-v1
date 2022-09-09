@@ -109,6 +109,7 @@ const getContent = async () => {
   fileSelects.splice(0, fileSelects.length);
   try {
     const result = await getFolderContent(props.foId);
+    console.log("getContent folder-item result",result)
     fLists.push(...result.data.data.folders);
     files.push(...result.data.data.files);
     fSelects.push(...new Array(result.data.data.folders.length).fill(false));
@@ -195,27 +196,6 @@ const cancelAllSelect = () => {
   });
 };
 
-/**
- * @description: 新增资源回调函数
- * @return {*}
- * @author: mzc
- */
-
-const createNewResource = (name: string) => {
-  createResource(props.sId, name)
-    .then((res) => {
-      if (res.data.code == "200") {
-        Message("info", res.data.msg);
-        getContent();
-      }
-    })
-    .catch((err) => {
-      console.log("createResource error", err);
-    })
-    .finally(() => {
-      createOptions.show = false;
-    });
-};
 
 /**
  * @description: 新建文件夹
@@ -226,7 +206,7 @@ const createNewResource = (name: string) => {
 
 const createNewFolder = (name: string) => {
   console.log(name);
-  createFolder(props.sId, 1, name)
+  createFolder(props.sId, props.foId, name)
     .then((res) => {
       if (res.data.code == "200") {
         Message("info", res.data.msg);
@@ -520,7 +500,6 @@ const handleFolderUpload = (files: FileList) => {
     v-if="createOptions.show"
     :type="createOptions.type"
     @update:show="createOptions.show = false"
-    @create-resource="createNewResource"
     @create-folder="createNewFolder"
   />
   <!-- 查看详情(资源、文件夹) 模态框 -->

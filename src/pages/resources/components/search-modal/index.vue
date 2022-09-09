@@ -24,7 +24,8 @@ const router = useRouter();
 
 const emits = defineEmits(["update:show"]);
 
-const tag = ref<"r" | "f" | "file" | "">("");
+// const tag = ref<"r" | "f" | "file" | "">("");
+const tag = ref<0 | 1 | 2 | 3>(0);
 const value = ref("");
 const { result } = useSearch(tag, value);
 
@@ -135,25 +136,25 @@ const gotoF = async (sId: number, foId: number) => {
         @clear-value="
           () => {
             value = '';
-            tag = '';
+            tag = 0;
           }
         "
-        @clear-tag="tag = ''"
+        @clear-tag="tag = 0"
       />
     </template>
     <template #body>
       <!-- tag选择 static -->
       <section class="section-lists">
         <ul v-show="!tag && !result">
-          <li @click="tag = 'r'">
+          <li @click="tag = 1">
             <svg-icon className="icon-icon-test" class="icon" />
             <span>资源</span>
           </li>
-          <li @click="tag = 'f'">
+          <li @click="tag = 2">
             <svg-icon className="icon-wenjianjia" class="icon" />
             <span>文件夹</span>
           </li>
-          <li @click="tag = 'file'">
+          <li @click="tag = 3">
             <svg-icon className="icon-wendangicon" class="icon" />
             <span>文件</span>
           </li>

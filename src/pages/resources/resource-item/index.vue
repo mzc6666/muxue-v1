@@ -46,6 +46,7 @@ const props = defineProps<{
   sId: number;
 }>();
 
+
 const rLists = reactive<any>([]);
 const fLists = reactive<any>([]);
 const files = reactive<any>([]);
@@ -123,6 +124,7 @@ const getContent = async () => {
   fileSelects.splice(0, fileSelects.length);
   try {
     const result = await getResourceContent(props.sId);
+    console.log("getContent resources-item result",result)
     rLists.push(...result.data.data.resources);
     fLists.push(...result.data.data.folders);
     files.push(...result.data.data.files);
@@ -148,6 +150,7 @@ const records: any = resourceStore.getRecordFromMap({
  */
 
 const handleResourceEnter = (sId: number, text: string) => {
+  
   const path = {
     name: MAIN_RESOURCE_RESOURCEITEM,
     params: {

@@ -19,7 +19,7 @@ import { Debounce } from "@/utils/public";
  */
 
 export const useSearch = (
-  type: "r" | "f" | "file" | "" | Ref<"r" | "f" | "file" | "">,
+  type: 0 | 1 | 2 | 3 | Ref<0 | 1 | 2 | 3>,
   text: Ref<string>
 ) => {
   const keyword = ref(unref(text));
@@ -35,13 +35,15 @@ export const useSearch = (
 
   const result = ref<any>(null);
   const handler = () => {
+    console.log("keywords ",unref(keyword),"type", unref(type))
     if (unref(keyword)) {
       searchThing(unref(keyword), unref(type))
         .then((res) => {
-          console.log("res", res);
+          console.log("searchThing res", res);
           result.value = res.data.data;
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log("searchThing error",err)
           result.value = null;
         });
     } else {

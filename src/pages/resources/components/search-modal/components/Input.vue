@@ -18,7 +18,7 @@ import { onUpdated, ref } from "vue";
 const props = withDefaults(
   defineProps<{
     value: string;
-    tag: "r" | "f" | "file" | "";
+    tag: 0 | 1 | 2 | 3;
   }>(),
   {}
 );
@@ -55,9 +55,9 @@ const handleKeyDown = (ev: any) => {
   <div class="input-container">
     <slot name="tag">
       <div class="tag-outer-box" v-if="tag">
-        <span v-if="tag === 'r'">资源</span>
-        <span v-if="tag === 'f'">文件夹</span>
-        <span v-if="tag === 'file'">文件</span>
+        <span v-if="tag === 1">资源</span>
+        <span v-if="tag === 2">文件夹</span>
+        <span v-if="tag === 3">文件</span>
       </div>
     </slot>
     <input

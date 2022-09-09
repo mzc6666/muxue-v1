@@ -18,7 +18,7 @@ import registerGlobalRective from "../directive";
  */
 
 const axiosInit = () => {
-  axios.defaults.baseURL = "https://mock.apifox.cn/m1/1283173-0-default/mx/v1";
+  axios.defaults.baseURL = "http://localhost:7200/mx/v1";
   axios.defaults.timeout = 4000;
   axios.defaults.headers.post["Content-Type"] = "application/json";
 };

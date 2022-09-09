@@ -32,12 +32,12 @@ export const getUserTopResources = (events: Events = {}) => {
  * @author: mzc
  */
 
-export const getResourceContent = (rId: number, events: Events = {}) => {
+export const getResourceContent = (id: number, events: Events = {}) => {
   return get(
     {
       url: "/resource/content",
       params: {
-        rId,
+        id,
       },
     },
     events
@@ -405,7 +405,7 @@ export const uploadFiles = (
 
 export const searchThing = (
   text: string,
-  type: "r" | "f" | "file" | "" | Ref<"r" | "f" | "file" | "">,
+  type:  0 | 1 | 2 | 3,
   events: Events = {}
 ) => {
   return get(

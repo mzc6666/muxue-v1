@@ -12,7 +12,7 @@ import ViewComments from "../view-comments/index.vue";
 import { useInfo } from "@/hooks/modules/resource";
 import { ref, watch, watchEffect } from "vue";
 import { computed } from "@vue/reactivity";
-import { getTimeString, Message } from "@/utils/public";
+import { getTimeString, Message,transformSize } from "@/utils/public";
 import {
   giveLikeToResource,
   resourceCollect,
@@ -54,12 +54,13 @@ watch(data, () => {
   if (!data.value) {
     text.value = "";
   } else {
+    console.log("data",data.value)
     if (props.type === "r") {
-      text.value = `包含${data.value.sonResource.count}个子资源(大小${data.value.sonResource.size}MB); 包含${data.value.sonFolder.count}个子文件夹(大小${data.value.sonFolder.size}MB); 包含${data.value.sonFile.count}个子文件(大小${data.value.sonFile.size}MB);`;
+      text.value = `包含${data.value.sonResource.count}个子资源(大小${transformSize(data.value.sonResource.size)}); 包含${data.value.sonFolder.count}个子文件夹(大小${transformSize(data.value.sonFolder.size)}); 包含${data.value.sonFile.count}个子文件(大小${transformSize(data.value.sonFile.size)});`;
     } else if (props.type === "f") {
-      text.value = `包含${data.value.sonFolder.count}个子文件夹(大小${data.value.sonFolder.size}MB); 包含${data.value.sonFile.count}个子文件(大小${data.value.sonFile.size}MB);`;
+      text.value = `包含${data.value.sonFolder.count}个子文件夹(大小${transformSize(data.value.sonFolder.size)}); 包含${data.value.sonFile.count}个子文件(大小${transformSize(data.value.sonFile.size)});`;
     } else if (props.type === "file") {
-      text.value = `${data.value.size}MB`;
+      text.value = `${transformSize(data.value.size)}`;
     }
   }
 });

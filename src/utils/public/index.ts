@@ -125,3 +125,9 @@ export const Throttle = (fn: Function, delay: number) => {
     }
   };
 };
+
+
+export const transformSize = (size: number) => {
+  const mb = size / 1024 / 1024;
+  return mb.toFixed(2) + 'MB';
+}
