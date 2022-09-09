@@ -4,8 +4,9 @@
  * @Autor: mzc
  * @Date: 2022-08-30 16:20:35
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-07 21:30:12
+ * @LastEditTime: 2022-09-09 14:59:01
 -->
+
 <script setup lang="ts">
 import Modal from "@components/Modal/index.vue";
 import Input from "@/components/Input/index.vue";
@@ -18,10 +19,9 @@ const props = withDefaults(
   {}
 );
 
-
 const emits = defineEmits(["createResource", "createFolder", "update:show"]);
 
-const title = ref(props.type === 'f' ? '新建文件夹' : '新建资源')
+const title = ref(props.type === "f" ? "新建文件夹" : "新建资源");
 
 const name = ref("");
 
@@ -59,12 +59,12 @@ const handleNegativeClick = () => {
 </script>
 <template>
   <Modal
+    :title="title"
     show
     v-bind="$attrs"
+    @update:show="$emit('update:show', false)"
     @active-btn-click="handleActiveClick"
-    @negative-btn-click="handleNegativeClick"
-    @update:show="$emit('update:show', false)
-    :title="title"
+    @negative-btn-click="$emit('update:show', false)"
   >
     <template #body>
       <section class="modal-body">
