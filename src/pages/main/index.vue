@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-08 15:10:16
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-08 23:07:06
+ * @LastEditTime: 2022-09-09 00:14:57
 -->
 <script setup lang="ts">
 import {
@@ -16,12 +16,6 @@ import {
   MAIN_COMMUNITY,
   MAIN_RESOURCE_MYRESOURCE,
 } from "@constants/route";
-import { useRoute } from "vue-router";
-import { computed } from "@vue/reactivity";
-const route = useRoute();
-const fullPath = computed(() => {
-  return route.fullPath;
-});
 </script>
 <template>
   <main>
