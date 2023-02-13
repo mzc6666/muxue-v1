@@ -1,22 +1,25 @@
 <!--
- * @Description: 
+ * @Description: 资源的评论
  * @Version: 
  * @Autor: mzc
  * @Date: 2022-09-07 16:11:38
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-08 20:54:04
+ * @LastEditTime: 2022-10-14 20:47:36
 -->
 <script setup lang="ts">
 import singleComment from "./components/single-comment.vue";
 import Modal from "@components/Modal/index.vue";
 import Input from "@components/Input/index.vue";
 import {
+  getResourceCommentInit,
   getResourceComment,
   getSonCommentList,
+  getSonCommentInit,
   giveLikeToComment,
 } from "@apis/modules/resources";
-import { Throttle } from "@/utils/public";
+import { Message, Throttle } from "@/utils/public";
 import { ref } from "vue";
+import { useComment } from "./hook";
 
 const props = withDefaults(
   defineProps<{
@@ -29,50 +32,86 @@ const emits = defineEmits(["update:show"]);
 
 const data = ref<any>(null);
 const wait = ref<boolean>(false); // 是否在获取数据
-const getDataTag = ref(0); // 正在获取数据的 index
+const getDataTag = ref(-1); // 正在获取数据的 index
+const map = new Map(); // 记录timeStamp
+let globalTimeStamp = ref(""); // 获取父评论的时间戳
 
 /**
- * @description: 获取最顶级评论
+ * @description: 初次获取最顶级评论
  * @return {*}
  * @author: mzc
  */
 
 const getData = async () => {
   wait.value = true;
-  getResourceComment(props.id)
-    .then((res) => {
-      data.value = res.data.data;
-    })
-    .catch((err) => {
-      console.log("getResourceComment error", err);
-    })
-    .finally(() => {
-      wait.value = false;
-    });
+  try {
+    const result = await getResourceCommentInit(props.id);
+    data.value = result.data.data;
+    globalTimeStamp.value = result.data.data.timeStamp;
+  } catch (err) {
+    console.log("getResourceComment error", err);
+  }
+  wait.value = false;
 };
 getData();
 
 /**
- * @description: 获取子评论处理函数
+ * @description: 获取顶层评论 (非初次获取)
+ * @return {*}
+ * @author: mzc
+ */
+const getTopComments = async () => {
+  wait.value = true;
+  getDataTag.value = -1;
+  try {
+    const result = await getResourceComment(props.id, globalTimeStamp.value);
+    data.value.comments.push(...result.data.data.comments);
+    globalTimeStamp.value = result.data.data.timeStamp;
+  } catch (err) {
+    console.log(`getTopComments error: ${err}`);
+  }
+  wait.value = false;
+};
+
+/**
+ * @description: 首次获取父评论的子评论
+ * @param { number } id 父评论ID
+ * @param { number } index 索引
+ * @return {*}
+ * @author: mzc
+ */
+
+const getSonCommentFirstTime = async (id: number, index: number) => {
+  wait.value = true;
+  getDataTag.value = id;
+  try {
+    const result = await getSonCommentInit(id);
+    data.value.comments[index].sonComments.push(...result.data.data.comments);
+    map.set(id, result.data.data.timeStamp);
+  } catch (err) {
+    console.log(`getSonCommentFirstTime error: ${err}`);
+  }
+  wait.value = false;
+};
+
+/**
+ * @description: 获取子评论处理函数(非首次获取)
  * @param { number } id 顶级评论ID
  * @param { number } index 索引
  * @return {*}
  * @author: mzc
  */
 
-const getSonComment = (id: number, index: number) => {
+const getSonComment = async (id: number, index: number) => {
   wait.value = true;
-  getDataTag.value = index;
-  getSonCommentList(id)
-    .then((res) => {
-      data.value.comments[index].sonComments.push(...res.data.data);
-    })
-    .catch((err) => {
-      console.log("getSonCommentList error", err);
-    })
-    .finally(() => {
-      wait.value = false;
-    });
+  getDataTag.value = id;
+  try {
+    const result = await getSonCommentList(id, map.get(id));
+    data.value.comments[index].sonComments.push(...result.data.data.comments);
+  } catch (err) {
+    console.log(`getSonCommentList error: ${err}`);
+  }
+  wait.value = false;
 };
 
 /**
@@ -83,19 +122,21 @@ const getSonComment = (id: number, index: number) => {
  * @author: mzc
  */
 
-const hangleGiveLikeToTopComment = Throttle((id: number, topIndex: number) => {
-  giveLikeToComment(id)
-    .then(() => {
+const hangleGiveLikeToTopComment = Throttle(
+  async (id: number, topIndex: number) => {
+    try {
+      await giveLikeToComment(id);
       data.value.comments[topIndex].isLike =
         !data.value.comments[topIndex].isLike;
       data.value.comments[topIndex].isLike
         ? data.value.comments[topIndex].likes++
         : data.value.comments[topIndex].likes--;
-    })
-    .catch((err) => {
-      console.log("giveLikeToComment error", err);
-    });
-}, 500);
+    } catch (err) {
+      console.log(`giveLikeToComment errror :${err}`);
+    }
+  },
+  500
+);
 
 /**
  * @description: 第二级评论点赞
@@ -107,20 +148,53 @@ const hangleGiveLikeToTopComment = Throttle((id: number, topIndex: number) => {
  */
 
 const handleGiveLikeToSecondComment = Throttle(
-  (id: number, topIndex: number, secondIndex: number) => {
-    giveLikeToComment(id).then(() => {
+  async (id: number, topIndex: number, secondIndex: number) => {
+    try {
+      await giveLikeToComment(id);
       data.value.comments[topIndex].sonComments[secondIndex].isLike =
         !data.value.comments[topIndex].sonComments[secondIndex].isLike;
       data.value.comments[topIndex].sonComments[secondIndex].isLike
         ? data.value.comments[topIndex].sonComments[secondIndex].likes++
         : data.value.comments[topIndex].sonComments[secondIndex].likes--;
-    });
+    } catch (err) {
+      console.log(`getLikeToSonComment error: ${err}`);
+    }
   },
   500
 );
 
-// 输入内容
-const text = ref("");
+const { type, placeholder, switchState, handleComment } = useComment(
+  data,
+  props.id
+);
+const inputText = ref("");
+/* 评论后的副作用 */
+const activeEffectGroup = {
+  resource: (result: any) => {
+    data.value.comments.unshift(result.data.data);
+    data.value.commentCount++;
+    inputText.value = "";
+  },
+  firstLevel: (index: number, result: any) => {
+    data.value.comments[index].sonComments.unshift(result.data.data);
+    data.value.comments[index].count++;
+    switchState(-1, -1, -1);
+    inputText.value = "";
+  },
+  secondLevel: (index1: number, index2: number, result: any) => {
+    data.value.comments[index1].sonComments.unshift(result.data.data);
+    data.value.comments[index1].count++;
+    switchState(-1, -1, -1);
+    inputText.value = "";
+  },
+};
+
+const findOpIdUserName = (topIndex: number, opId: number) => {
+  let val = data.value.comments[topIndex].sonComments.find(
+    (item: any) => item.id === opId
+  )?.user?.name;
+  return val;
+};
 </script>
 <template>
   <Modal
@@ -138,6 +212,7 @@ const text = ref("");
           :key="item.id"
           v-bind="item"
           @give-like="hangleGiveLikeToTopComment(item.id, index)"
+          @ready-to-reply="switchState(item.id, index)"
         >
           <!-- 子评论 -->
           <section v-if="item.sonComments.length">
@@ -148,31 +223,67 @@ const text = ref("");
               @give-like="
                 handleGiveLikeToSecondComment(item1.id, index, index1)
               "
-            ></singleComment>
+              @ready-to-reply="switchState(item1.id, index, index1)"
+            >
+              <template #reply>
+                <p v-if="item1.opId">
+                  回复
+                  {{ findOpIdUserName(index, item1.opId) }}
+                </p>
+              </template>
+            </singleComment>
           </section>
           <!-- 展开更多 -->
           <div
             v-show="item.count - item.sonComments.length && !wait"
             class="more"
           >
-            <div class="look-more" @click="getSonComment(item.id, index)">
+            <div
+              class="look-more"
+              @click="getSonCommentFirstTime(item.id, index)"
+              v-if="!map.has(item.id)"
+            >
+              <p>展开更多</p>
+              <svg-icon className="icon-gengduo2" class="icon" />
+            </div>
+            <div
+              class="look-more"
+              @click="getSonComment(item.id, index)"
+              v-if="map.has(item.id)"
+            >
               <p>展开更多</p>
               <svg-icon className="icon-gengduo2" class="icon" />
             </div>
           </div>
           <!-- 加载中 -->
-          <div class="loading">
-            <n-spin size="small" v-if="wait && index === getDataTag"> </n-spin>
+          <div class="loading" v-if="wait && item.id === getDataTag">
+            <n-spin size="small"> </n-spin>
           </div>
         </singleComment>
+        <!-- 展开更多 -->
+        <div
+          v-show="data.commentCount > data.comments.length && !wait"
+          class="more top"
+        >
+          <div class="look-more" @click="getTopComments">
+            <p>展开更多</p>
+            <svg-icon className="icon-gengduo2" class="icon" />
+          </div>
+        </div>
+        <!-- 加载中 -->
+        <div class="loading top" v-if="wait && getDataTag === -1">
+          <n-spin size="small"></n-spin>
+        </div>
       </section>
     </template>
     <template #footer>
       <div class="footer">
-        <input type="text" />
+        <input type="text" v-model="inputText" :placeholder="placeholder" />
         <div class="fns">
           <svg-icon className="icon-biaoqingbao" class="icon" />
-          <button>发送</button>
+          <button @click="handleComment(inputText)(activeEffectGroup[type])">
+            发送
+          </button>
         </div>
       </div>
     </template>
@@ -209,8 +320,12 @@ const text = ref("");
     display: flex;
     justify-content: center;
   }
+  .top {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+  }
 }
-
 .footer {
   padding: 8px 16px;
   background: map-get($map: $gray-colors, $key: 100);

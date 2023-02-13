@@ -4,12 +4,13 @@
  * @Autor: mzc
  * @Date: 2022-08-24 10:29:43
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-06 11:40:39
+ * @LastEditTime: 2022-09-28 21:52:33
  */
 
 import { createFolder, uploadFiles } from "@apis/modules/resources";
-import { AxiosPromise, AxiosResponse } from "axios";
 import { Message } from "../public";
+import * as Delete from "./delete";
+import * as download from "./download";
 
 /**
  * @description: 构造文件夹结构

@@ -4,8 +4,13 @@
  * @Autor: mzc
  * @Date: 2022-08-29 16:20:47
  * @LastEditors: mzc
- * @LastEditTime: 2022-08-29 16:35:29
+ * @LastEditTime: 2022-12-23 16:36:21
 -->
+<script lang="ts">
+export default {
+  inheritAttrs: true,
+};
+</script>
 <script setup lang="ts">
 const props = withDefaults(
   defineProps<{

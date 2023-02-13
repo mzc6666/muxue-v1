@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-20 13:52:24
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-09 14:49:35
+ * @LastEditTime: 2022-12-23 16:24:58
 -->
 <script setup lang="ts">
 import { reactive, ref } from "vue";
@@ -12,9 +12,6 @@ import {
   getUserTopResources,
   resourceLock,
   createResource,
-  deleteResource,
-  resourceRename,
-  resourceCollect,
 } from "@apis/modules/resources";
 import { useResourcesStore } from "@/store";
 import router from "@/route";
@@ -24,10 +21,18 @@ import { MAIN_RESOURCE_RESOURCEITEM } from "@constants/route";
 import { computed } from "@vue/reactivity";
 import CreateDropdown from "./components/create-dropdown/index.vue";
 import CreateModal from "./components/create-modal/index.vue";
-import ViewDetails from "../resources/components/view-details/index.vue";
-import RenameModal from "../resources/components/rename-modal/index.vue";
-import SearchModal from "../resources/components/search-modal/index.vue";
-import { Dialog, Message } from "@/utils/public";
+import ViewDetails from "./components/view-details/index.vue";
+import RenameModal from "./components/rename-modal/index.vue";
+import SearchModal from "./components/search-modal/index.vue";
+import MoveBox from "./components/move-box/index.vue";
+import { Message } from "@/utils/public";
+import { handleResourceDelete, deleteEffect } from "@/utils/resources/delete";
+import { downLoad } from "@/utils/resources/download";
+import { handleCollect, collectEffect } from "@/utils/resources/collect";
+import {
+  handleResourceRename,
+  resourceRenameEffect,
+} from "@/utils/resources/rename";
 
 const resourceStore = useResourcesStore();
 
@@ -64,6 +69,13 @@ const rename = reactive<{
   type: "r",
   initName: "",
   order: 0,
+});
+
+// 资源移动
+const move = reactive<{
+  show: boolean;
+}>({
+  show: false,
 });
 
 /**
@@ -184,66 +196,6 @@ const createNewResource = (name: string) => {
     });
 };
 
-const modalShow = () => {
-  modal1.show = true;
-};
-
-/**
- * @description: 下载资源
- * @param {number} sId 资源ID
- * @return {*}
- * @author: mzc
- */
-
-const downLoadResource = (sId: number) => {
-  Message("error", "web端暂不支持下载资源功能");
-};
-
-/**
- * @description: 删除资源
- * @param {number} id 资源ID
- * @param {number} index 索引
- * @return {*}
- * @author: mzc
- */
-
-const onDelete = (id: number, index: number) => {
-  Dialog("warning", {
-    title: "确定删除吗",
-    content: "10天内可以从回收站撤销",
-    positiveText: "确定",
-    negativeText: "取消",
-    onPositiveClick: () => {
-      deleteResource(id)
-        .then((res) => {
-          resources.splice(index, 1);
-          Message("success", res.data.msg);
-        })
-        .catch((err) => {
-          console.log("delete err", err);
-        });
-    },
-  });
-};
-
-/**
- * @description: 资源重命名 handler
- * @param { string} name 资源名
- * @return {*}
- * @author: mzc
- */
-const handleResourceRename = (name: string) => {
-  resourceRename(rename.id, name)
-    .then((res) => {
-      resources[rename.order].sName = name;
-      Message("success", res.data.msg);
-    })
-    .catch((err) => {})
-    .finally(() => {
-      rename.show = false;
-    });
-};
-
 /**
  * @description: 资源公开 handler
  * @param { number } id
@@ -263,25 +215,6 @@ const onPublic = async (id: number, index: number) => {
     Message("success", result.data.msg);
   } catch (err) {
     console.log("resourceLock error", err);
-  }
-};
-
-/**
- * @description: 资源 搜藏/取消收藏 handler
- * @param { number } id 资源ID
- * @param { number } index 索引
- * @return {*}
- * @author: mzc
- */
-const onCollect = async (id: number, index: number) => {
-  try {
-    const result = await resourceCollect(id);
-    if (result.data.code === "200") {
-      resources[index].isCollection = !resources[index].isCollection;
-    }
-    Message("success", result.data.msg);
-  } catch (err) {
-    console.log("resourceCollect error", err);
   }
 };
 </script>
@@ -335,7 +268,10 @@ const onCollect = async (id: number, index: number) => {
               :hasSelect="selectList[index]"
               :handleSelect="selectResource(index)"
               @click="handleEnter(item.sId, item.sName)"
-              @on-download="downLoadResource"
+              @on-download="downLoad"
+              @on-collect="
+                handleCollect(item.sId)(collectEffect(resources[index]))
+              "
               @on-details="
                 () => {
                   detail.show = true;
@@ -344,7 +280,6 @@ const onCollect = async (id: number, index: number) => {
                   detail.title = item.sName;
                 }
               "
-              @on-delete="onDelete(item.sId, index)"
               @on-rename="
                 () => {
                   rename.show = true;
@@ -355,7 +290,10 @@ const onCollect = async (id: number, index: number) => {
                 }
               "
               @on-public="onPublic(item.sId, index)"
-              @on-collect="onCollect(item.sId, index)"
+              @on-move="move.show = true"
+              @on-delete="
+                handleResourceDelete(item.sId)(deleteEffect(resources, index))
+              "
             >
               <template #icon>
                 <svg-icon
@@ -384,23 +322,28 @@ const onCollect = async (id: number, index: number) => {
     :title="detail.title"
     @update:show="detail.show = false"
   />
+  <!-- 移动资源 -->
+  <MoveBox type="resource" v-if="move.show" />
   <!-- 资源重命名 -->
   <RenameModal
     v-if="rename.show"
     :init-name="rename.initName"
     :type="rename.type"
-    @resource-rename="handleResourceRename"
+    @resource-rename="
+      (name) => {
+        handleResourceRename(
+          rename.id,
+          name
+        )(resourceRenameEffect(resources[rename.order], name));
+        rename.show = false;
+      }
+    "
     @update:show="rename.show = false"
   />
   <!-- 搜索框 -->
   <SearchModal v-if="searchShow" @update:show="searchShow = false" />
 </template>
 <style scoped lang="scss">
-@mixin horizonalFlex {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 header {
   display: flex;
   height: 125px;
@@ -422,7 +365,7 @@ header {
     }
   }
   .fns {
-    @include horizonalFlex;
+    @include flex-justify-align;
     .search-icon {
       margin-right: 20px;
       font-size: 20px;
@@ -434,7 +377,7 @@ header {
       height: 24px;
       border-radius: 50%;
       background: $green-02;
-      @include horizonalFlex;
+      @include flex-justify-align;
       cursor: pointer;
       .add-icon {
         font-size: 20px;
@@ -456,11 +399,7 @@ main {
     flex: 1;
     position: relative;
     div.absolute {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
+      @include absolute-fullSize;
       overflow: auto;
       &::-webkit-scrollbar {
         display: none;
@@ -468,9 +407,8 @@ main {
       div.outer-container {
         overflow: auto;
         div.content {
-          display: flex;
           flex-wrap: wrap;
-          justify-content: space-between;
+          @include flex-justify-align(space-between, stretch);
         }
       }
     }
@@ -488,3 +426,5 @@ main {
   }
 }
 </style>
+
+<!-- 460 -->

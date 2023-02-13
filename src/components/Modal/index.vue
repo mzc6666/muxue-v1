@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-25 17:11:51
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-08 10:07:53
+ * @LastEditTime: 2022-12-16 20:18:30
 -->
 <script lang="ts">
 export default {
@@ -29,6 +29,7 @@ const props = withDefaults(
   {
     maskClose: true,
     activeText: "确定",
+    title: "",
     negativeText: "取消",
     hasNegative: false,
     maskBackground: "rgba(0, 0, 0, 0.35)",

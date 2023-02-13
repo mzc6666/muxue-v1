@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-22 09:38:40
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-07 21:50:20
+ * @LastEditTime: 2022-10-04 15:21:36
 -->
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
@@ -20,17 +20,25 @@ import router from "@/route";
 import { useResourcesStore } from "@/store";
 import { MAIN_RESOURCE_FOLDERITEM } from "@constants/route";
 import {
-  createResource,
   createFolder,
-  folderRename,
   deleteFolder,
-  fileRename,
   fileDelete,
   getFolderContent,
   uploadFiles,
 } from "@apis/modules/resources";
 import { Message, Dialog } from "@/utils/public";
 import { buildFileTreeStruct, createFullFolder } from "@/utils/resources";
+import {
+  handleFolderRename,
+  handleFileRename,
+  folderRenameEffect,
+  fileRenameEffect,
+} from "@/utils/resources/rename";
+import {
+  handleFolderDelete,
+  handleFileDelete,
+  deleteEffect,
+} from "@/utils/resources/delete";
 
 const resourceStore = useResourcesStore();
 
@@ -109,7 +117,7 @@ const getContent = async () => {
   fileSelects.splice(0, fileSelects.length);
   try {
     const result = await getFolderContent(props.foId);
-    console.log("getContent folder-item result",result)
+    console.log("getContent folder-item result", result);
     fLists.push(...result.data.data.folders);
     files.push(...result.data.data.files);
     fSelects.push(...new Array(result.data.data.folders.length).fill(false));
@@ -196,7 +204,6 @@ const cancelAllSelect = () => {
   });
 };
 
-
 /**
  * @description: 新建文件夹
  * @param { number } name 文件夹名
@@ -232,54 +239,6 @@ const handlerFolderDownload = () => {
 };
 
 /**
- * @description: 删除文件夹
- * @param { number } id 文件夹ID
- * @param { number } index 索引
- * @return {*}
- * @author: mzc
- */
-
-const handlerFolderDelete = (id: number, index: number) => {
-  Dialog("warning", {
-    title: "确定删除吗",
-    content: "10天内可以从回收站撤销",
-    positiveText: "确定",
-    negativeText: "取消",
-    onPositiveClick: () => {
-      deleteFolder(id)
-        .then((res) => {
-          fLists.splice(index, 1);
-          Message("success", res.data.msg);
-        })
-        .catch((err) => {
-          console.log("delete err", err);
-        });
-    },
-  });
-};
-
-/**
- * @description: 文件夹重命名
- * @param { string } name 新的文件名
- * @return {*}
- * @author: mzc
- */
-
-const handleFolderRename = (name: string) => {
-  folderRename(rename.id, name)
-    .then((res) => {
-      fLists[rename.order].foName = name;
-      Message("success", res.data.msg);
-    })
-    .catch((err) => {
-      console.log("folderRename error", err);
-    })
-    .finally(() => {
-      rename.show = false;
-    });
-};
-
-/**
  * @description: 文件下载 handler
  * @return {*}
  * @author: mzc
@@ -287,54 +246,6 @@ const handleFolderRename = (name: string) => {
 
 const handleFileDownload = () => {
   Message("error", "web端暂时不支持下载");
-};
-
-/**
- * @description: 文件 重命名
- * @param { string } name 新的文件名
- * @return {*}
- * @author: mzc
- */
-
-const handleFileRename = (name: string) => {
-  fileRename(rename.id, name)
-    .then((res) => {
-      files[rename.order].fileName = name;
-      Message("success", res.data.msg);
-    })
-    .catch((err) => {
-      console.log("fileRename error", err);
-    })
-    .finally(() => {
-      rename.show = false;
-    });
-};
-
-/**
- * @description: 删除文件
- * @param { number } id 文件ID
- * @param { number } index 索引
- * @return {*}
- * @author: mzc
- */
-
-const handleFileDelete = (id: number, index: number) => {
-  Dialog("warning", {
-    title: "确定删除吗",
-    content: "10天内可以从回收站撤销",
-    positiveText: "确定",
-    negativeText: "取消",
-    onPositiveClick: () => {
-      fileDelete(id)
-        .then((res) => {
-          files.splice(index, 1);
-          Message("success", res.data.msg);
-        })
-        .catch((err) => {
-          console.log("fileDelete err", err);
-        });
-    },
-  });
 };
 
 /**
@@ -440,7 +351,9 @@ const handleFolderUpload = (files: FileList) => {
               "
               @click="handleFolderEnter(item.foId, item.foName)"
               @on-download="handlerFolderDownload"
-              @on-delete="handlerFolderDelete(item.foId, index)"
+              @on-delete="
+                handleFolderDelete(item.foId)(deleteEffect(fLists, index))
+              "
               @on-rename="
                 () => {
                   rename.show = true;
@@ -488,7 +401,9 @@ const handleFolderUpload = (files: FileList) => {
                   detail.title = item.fileName;
                 }
               "
-              @on-delete="handleFileDelete(item.fId, index)"
+              @on-delete="
+                handleFileDelete(item.fId)(deleteEffect(files, index))
+              "
             />
           </div>
         </div>
@@ -516,8 +431,24 @@ const handleFolderUpload = (files: FileList) => {
     :init-name="rename.initName"
     :type="rename.type"
     @update:show="rename.show = false"
-    @folder-rename="handleFolderRename"
-    @file-rename="handleFileRename"
+    @folder-rename="
+      (name) => {
+        handleFolderRename(
+          rename.id,
+          name
+        )(folderRenameEffect(fLists[rename.order], name));
+        rename.show = false;
+      }
+    "
+    @file-rename="
+      (name) => {
+        handleFileRename(
+          rename.id,
+          name
+        )(fileRenameEffect(files[rename.order], name));
+        rename.show = false;
+      }
+    "
   />
   <!-- 搜索 modal -->
   <SearchModal v-if="searchShow" @update:show="searchShow = false" />

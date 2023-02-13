@@ -4,10 +4,9 @@
  * @Autor: mzc
  * @Date: 2022-08-21 16:05:55
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-08 18:03:43
+ * @LastEditTime: 2022-10-22 11:31:48
  */
 import { Delete, get, post } from "@apis/request";
-import { Ref } from "vue";
 
 /**
  * @description: 我的资源-获取顶级资源
@@ -405,7 +404,7 @@ export const uploadFiles = (
 
 export const searchThing = (
   text: string,
-  type:  0 | 1 | 2 | 3,
+  type: 0 | 1 | 2 | 3,
   events: Events = {}
 ) => {
   return get(
@@ -447,17 +446,17 @@ export const getRoute = (
 };
 
 /**
- * @description: 获取评论
+ * @description: 初次获取资源的顶层评论
  * @param {number} id 资源ID
  * @param {Events} events 事件对象
  * @return {*}
  * @author: mzc
  */
 
-export const getResourceComment = (id: number, events: Events = {}) => {
+export const getResourceCommentInit = (id: number, events: Events = {}) => {
   return get(
     {
-      url: "/resource/comment",
+      url: "/resource/comment/init",
       params: {
         id,
       },
@@ -467,19 +466,70 @@ export const getResourceComment = (id: number, events: Events = {}) => {
 };
 
 /**
- * @description: 获取子评论
- * @param {number} id 顶级评论的ID
+ * @description: 获取资源的评论(非首次)
+ * @param {number} id 资源ID
  * @param {Events} events 事件对象
  * @return {*}
  * @author: mzc
  */
 
-export const getSonCommentList = (id: number, events: Events = {}) => {
+export const getResourceComment = (
+  id: number,
+  timeStamp: string,
+  events: Events = {}
+) => {
   return get(
     {
-      url: "/resource/comment/sons",
+      url: "/resource/comment",
       params: {
         id,
+        timeStamp,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 首次获取子评论
+ * @param {number} id 父评论ID
+ * @param {Events} events 事件对象
+ * @return {*}
+ * @author: mzc
+ */
+
+export const getSonCommentInit = (id: number, events: Events = {}) => {
+  return get(
+    {
+      url: "/resource/sonComment/init",
+      params: {
+        id,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 获取子评论列表
+ * @param { number} id 父评论ID
+ * @param { string} timeStamp 时间戳
+ * @param {Events} events 事件对象
+ * @return {*}
+ * @author: mzc
+ */
+
+export const getSonCommentList = (
+  id: number,
+  timeStamp: string,
+  events: Events = {}
+) => {
+  return get(
+    {
+      url: "/resource/sonComment",
+      params: {
+        id,
+        timeStamp,
       },
     },
     events
@@ -499,6 +549,137 @@ export const giveLikeToComment = (id: number, events: Events = {}) => {
       url: "/resource/comment/giveLike",
       data: {
         id,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 给资源评论
+ * @param {number} id 资源ID
+ * @param {string} message 发送内容
+ * @param {Events} events 事件对象
+ * @return {*}
+ * @author: mzc
+ */
+export const commentToResource = (
+  id: number,
+  message: string,
+  events: Events = {}
+) => {
+  return post(
+    {
+      url: "/resource/comment",
+      data: {
+        id,
+        message,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 给评论评论
+ * @param {number} id 被评论的ID
+ * @param {string} message 消息
+ * @param {Events} events 事件对象
+ * @return {Promise}
+ * @author: mzc
+ */
+export const commentToComment = (
+  id: number,
+  message: string,
+  events: Events = {}
+) => {
+  return post(
+    {
+      url: "/resource/comment/reply",
+      data: {
+        id,
+        message,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 资源移动
+ * @param {number} curId 需要移动的资源ID
+ * @param {number} aimId 移动的目标资源
+ * @param {Events} events 事件对象
+ * @return {Promise}
+ * @author: mzc
+ */
+export const moveResource = (
+  curId: number,
+  aimId: number,
+  events: Events = {}
+) => {
+  return post(
+    {
+      url: "/resource/move",
+      data: {
+        curId,
+        aimId,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 移动文件夹
+ * @param {number} curId 移动的文件夹的ID
+ * @param {number} rid 目标资源ID
+ * @param {number} fid 选填,默认为0，表示移动到资源内，目标文件夹ID
+ * @param {Events} events 事件对象
+ * @return {Promise}
+ * @author: mzc
+ */
+export const moveFolder = (
+  curId: number,
+  rid: number,
+  fid: number = 0,
+  events: Events = {}
+) => {
+  return post(
+    {
+      url: "/resource/folder/move",
+      data: {
+        curId,
+        rid,
+        fid,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 移动文件
+ * @param {number} curId 需要移动的文件ID
+ * @param {number} rid 目标资源ID
+ * @param {number} fid 选填, 默认为0， 表示移动文件到资源内， 移动的目标文件夹ID
+ * @param {Events} events 事件对象
+ * @return {*}
+ * @author: mzc
+ */
+export const moveFile = (
+  curId: number,
+  rid: number,
+  fid: number = 0,
+  events: Events = {}
+) => {
+  return post(
+    {
+      url: "/resource/file/move",
+      data: {
+        curId,
+        rid,
+        fid,
       },
     },
     events

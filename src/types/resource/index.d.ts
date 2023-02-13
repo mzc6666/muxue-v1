@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-28 16:52:47
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-07 10:54:52
+ * @LastEditTime: 2023-01-05 22:45:47
  */
 declare interface PermissionEvents {
   onDownload?: () => void;
@@ -22,6 +22,21 @@ declare interface ResourceOptions {
   sName: string;
   updateTime: string;
   isPublic: 0 | 1 | 2; // 0 --> 我的收藏内的资源; 1 --> 非公开;  2 --> 公开
+  size: number;
+}
+
+declare interface FolderOptions {
+  foId: number;
+  foName: string;
+  updateTime: string;
+  size: number;
+}
+
+declare interface FileOptions {
+  fId: number;
+  fileName: string;
+  type: string;
+  updateTime: string;
   size: number;
 }
 
@@ -48,3 +63,13 @@ declare interface singlePath {
   };
   text: string;
 }
+
+// 策略对象(删除)
+declare interface resourceStrategist {
+  resource: Function;
+  folder: Function;
+  file: Function;
+}
+
+/* 资源 / 文件夹 / 文件 */
+declare type Types = "resource" | "folder" | "file";

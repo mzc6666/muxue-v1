@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  outline: none;
 }
 
 /* 列表没有左侧的点 */
@@ -70,4 +71,14 @@ body {
 h1 {
   @include BigFont(36px);
   font-weight: normal;
+}
+
+.flex {
+  display: flex;
+}
+.justify-content-center {
+  justify-content: center;
+}
+.align-items-center {
+  align-items: center;
 }

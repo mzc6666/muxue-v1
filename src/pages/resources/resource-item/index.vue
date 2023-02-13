@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-20 13:53:20
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-07 21:44:10
+ * @LastEditTime: 2022-10-04 15:14:20
 -->
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
@@ -25,27 +25,35 @@ import {
   MAIN_RESOURCE_RESOURCEITEM,
 } from "@constants/route";
 import {
-  deleteResource,
-  resourceRename,
   resourceLock,
-  resourceCollect,
   createResource,
   createFolder,
-  folderRename,
-  deleteFolder,
-  fileRename,
-  fileDelete,
   uploadFiles,
 } from "@apis/modules/resources";
 import { Message, Dialog } from "@/utils/public";
 import { buildFileTreeStruct, createFullFolder } from "@/utils/resources";
+import { downLoad } from "@/utils/resources/download";
+import {
+  handleResourceDelete,
+  handleFolderDelete,
+  handleFileDelete,
+  deleteEffect,
+} from "@/utils/resources/delete";
+import { handleCollect, collectEffect } from "@/utils/resources/collect";
+import {
+  handleResourceRename,
+  handleFolderRename,
+  handleFileRename,
+  resourceRenameEffect,
+  folderRenameEffect,
+  fileRenameEffect,
+} from "@/utils/resources/rename";
 
 const resourceStore = useResourcesStore();
 
 const props = defineProps<{
   sId: number;
 }>();
-
 
 const rLists = reactive<any>([]);
 const fLists = reactive<any>([]);
@@ -124,7 +132,7 @@ const getContent = async () => {
   fileSelects.splice(0, fileSelects.length);
   try {
     const result = await getResourceContent(props.sId);
-    console.log("getContent resources-item result",result)
+    console.log("getContent resources-item result", result);
     rLists.push(...result.data.data.resources);
     fLists.push(...result.data.data.folders);
     files.push(...result.data.data.files);
@@ -150,7 +158,6 @@ const records: any = resourceStore.getRecordFromMap({
  */
 
 const handleResourceEnter = (sId: number, text: string) => {
-  
   const path = {
     name: MAIN_RESOURCE_RESOURCEITEM,
     params: {
@@ -260,61 +267,6 @@ const cancelAllSelect = () => {
     fileSelects[index] = false;
   });
 };
-/**
- * @description: 下载资源
- * @param {number} sId 资源ID
- * @return {*}
- * @author: mzc
- */
-
-const downLoadResource = (sId: number) => {
-  Message("error", "web端暂不支持下载资源功能");
-};
-
-/**
- * @description: 删除资源
- * @param {number} id 资源ID
- * @param {number} index 索引
- * @return {*}
- * @author: mzc
- */
-
-const onDelete = (id: number, index: number) => {
-  Dialog("warning", {
-    title: "确定删除吗",
-    content: "10天内可以从回收站撤销",
-    positiveText: "确定",
-    negativeText: "取消",
-    onPositiveClick: () => {
-      deleteResource(id)
-        .then((res) => {
-          rLists.splice(index, 1);
-          Message("success", res.data.msg);
-        })
-        .catch((err) => {
-          console.log("delete err", err);
-        });
-    },
-  });
-};
-
-/**
- * @description: 资源重命名 handler
- * @param { string} name 资源名
- * @return {*}
- * @author: mzc
- */
-const handleResourceRename = (name: string) => {
-  resourceRename(rename.id, name)
-    .then((res) => {
-      rLists[rename.order].sName = name;
-      Message("success", res.data.msg);
-    })
-    .catch((err) => {})
-    .finally(() => {
-      rename.show = false;
-    });
-};
 
 /**
  * @description: 资源公开 handler
@@ -333,25 +285,6 @@ const onPublic = async (id: number, index: number) => {
     Message("success", result.data.msg);
   } catch (err) {
     console.log("resourceLock error", err);
-  }
-};
-
-/**
- * @description: 资源 搜藏/取消收藏 handler
- * @param { number } id 资源ID
- * @param { number } index 索引
- * @return {*}
- * @author: mzc
- */
-const onCollect = async (id: number, index: number) => {
-  try {
-    const result = await resourceCollect(id);
-    result.data.msg === "收藏成功"
-      ? (rLists[index].isCollection = true)
-      : (rLists[index].isCollection = false);
-    Message("success", result.data.msg);
-  } catch (err) {
-    console.log("resourceCollect error", err);
   }
 };
 
@@ -398,122 +331,6 @@ const createNewFolder = (name: string) => {
     .finally(() => {
       createOptions.show = false;
     });
-};
-
-/**
- * @description: 文件夹下载
- * @return {*}
- * @author: mzc
- */
-
-const handlerFolderDownload = () => {
-  Message("error", "web端暂时不支持下载功能");
-};
-
-/**
- * @description: 删除文件夹
- * @param { number } id 文件夹ID
- * @param { number } index 索引
- * @return {*}
- * @author: mzc
- */
-
-const handlerFolderDelete = (id: number, index: number) => {
-  Dialog("warning", {
-    title: "确定删除吗",
-    content: "10天内可以从回收站撤销",
-    positiveText: "确定",
-    negativeText: "取消",
-    onPositiveClick: () => {
-      deleteFolder(id)
-        .then((res) => {
-          fLists.splice(index, 1);
-          Message("success", res.data.msg);
-        })
-        .catch((err) => {
-          console.log("delete err", err);
-        });
-    },
-  });
-};
-
-/**
- * @description: 文件夹重命名
- * @param { string } name 新的文件名
- * @return {*}
- * @author: mzc
- */
-
-const handleFolderRename = (name: string) => {
-  folderRename(rename.id, name)
-    .then((res) => {
-      fLists[rename.order].foName = name;
-      Message("success", res.data.msg);
-    })
-    .catch((err) => {
-      console.log("folderRename error", err);
-    })
-    .finally(() => {
-      rename.show = false;
-    });
-};
-
-/**
- * @description: 文件下载 handler
- * @return {*}
- * @author: mzc
- */
-
-const handleFileDownload = () => {
-  Message("error", "web端暂时不支持下载");
-};
-
-/**
- * @description: 文件 重命名
- * @param { string } name 新的文件名
- * @return {*}
- * @author: mzc
- */
-
-const handleFileRename = (name: string) => {
-  fileRename(rename.id, name)
-    .then((res) => {
-      files[rename.order].fileName = name;
-      Message("success", res.data.msg);
-    })
-    .catch((err) => {
-      console.log("fileRename error", err);
-    })
-    .finally(() => {
-      rename.show = false;
-    });
-};
-
-/**
- * @description: 删除文件
- * @param { number } id 文件ID
- * @param { number } index 索引
- * @return {*}
- * @author: mzc
- */
-
-const handleFileDelete = (id: number, index: number) => {
-  Dialog("warning", {
-    title: "确定删除吗",
-    content: "10天内可以从回收站撤销",
-    positiveText: "确定",
-    negativeText: "取消",
-    onPositiveClick: () => {
-      fileDelete(id)
-        .then((res) => {
-          files.splice(index, 1);
-          Message("success", res.data.msg);
-        })
-        .catch((err) => {
-          console.log("fileDelete err", err);
-        });
-    },
-  });
 };
 
 /**
@@ -620,7 +437,10 @@ const handleFolderUpload = (files: FileList) => {
               :hasSelect="rSelects[index]"
               :handleSelect="selectResource(index)"
               @click="handleResourceEnter(item.sId, item.sName)"
-              @on-download="downLoadResource"
+              @on-download="downLoad"
+              @on-delete="
+                handleResourceDelete(item.sId)(deleteEffect(rLists, index))
+              "
               @on-details="
                 () => {
                   detail.show = true;
@@ -629,7 +449,6 @@ const handleFolderUpload = (files: FileList) => {
                   detail.title = item.sName;
                 }
               "
-              @on-delete="onDelete(item.sId, index)"
               @on-rename="
                 () => {
                   rename.show = true;
@@ -640,7 +459,9 @@ const handleFolderUpload = (files: FileList) => {
                 }
               "
               @on-public="onPublic(item.sId, index)"
-              @on-collect="onCollect(item.sId, index)"
+              @on-collect="
+                handleCollect(item.sId)(collectEffect(rLists[index]))
+              "
             />
             <FolderBox
               v-for="(item, index) in fLists"
@@ -654,8 +475,10 @@ const handleFolderUpload = (files: FileList) => {
                 }
               "
               @click="handleFolderEnter(item.foId, item.foName)"
-              @on-download="handlerFolderDownload"
-              @on-delete="handlerFolderDelete(item.foId, index)"
+              @on-download="downLoad"
+              @on-delete="
+                handleFolderDelete(item.foId)(deleteEffect(fLists, index))
+              "
               @on-rename="
                 () => {
                   rename.show = true;
@@ -685,7 +508,10 @@ const handleFolderUpload = (files: FileList) => {
                   fileSelects[index] = !fileSelects[index];
                 }
               "
-              @on-download="handleFileDownload"
+              @on-download="downLoad"
+              @on-delete="
+                handleFileDelete(item.fId)(deleteEffect(files, index))
+              "
               @on-rename="
                 () => {
                   rename.show = true;
@@ -703,7 +529,6 @@ const handleFolderUpload = (files: FileList) => {
                   detail.title = item.fileName;
                 }
               "
-              @on-delete="handleFileDelete(item.fId, index)"
             />
           </div>
         </div>
@@ -732,9 +557,33 @@ const handleFolderUpload = (files: FileList) => {
     :init-name="rename.initName"
     :type="rename.type"
     @update:show="rename.show = false"
-    @resource-rename="handleResourceRename"
-    @folder-rename="handleFolderRename"
-    @file-rename="handleFileRename"
+    @resource-rename="
+      (name) => {
+        handleResourceRename(
+          rename.id,
+          name
+        )(resourceRenameEffect(rLists[rename.order], name));
+        rename.show = false;
+      }
+    "
+    @folder-rename="
+      (name) => {
+        handleFolderRename(
+          rename.id,
+          name
+        )(folderRenameEffect(fLists[rename.order], name));
+        rename.show = false;
+      }
+    "
+    @file-rename="
+      (name) => {
+        handleFileRename(
+          rename.id,
+          name
+        )(fileRenameEffect(files[rename.order], name));
+        rename.show = false;
+      }
+    "
   />
   <!-- 搜索框 -->
   <SerachModal v-if="searchShow" @update:show="searchShow = false" />

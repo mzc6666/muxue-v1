@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-09-07 19:19:18
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-08 19:53:21
+ * @LastEditTime: 2022-10-14 20:34:05
 -->
 <script lang="ts">
 export default {
@@ -21,7 +21,7 @@ const props = withDefaults(
       uid: number;
       name: number;
       avater: number;
-      isOwn: number;
+      isOwn: boolean;
     };
     content: string;
     time: string;
@@ -31,7 +31,7 @@ const props = withDefaults(
   {}
 );
 
-const emits = defineEmits(["giveLike"]);
+const emits = defineEmits(["giveLike", "readyToReply"]);
 </script>
 <template>
   <section class="single-comment" v-bind="$attrs">
@@ -43,6 +43,7 @@ const emits = defineEmits(["giveLike"]);
         <p class="tag-writer" v-if="user.isOwn">作者</p>
       </div>
       <div class="content">
+        <slot name="reply"></slot>
         <p>{{ content }}</p>
       </div>
       <div class="like-and-comment">
@@ -53,7 +54,7 @@ const emits = defineEmits(["giveLike"]);
           />
           <span>{{ likes }}</span>
         </div>
-        <div class="comment">
+        <div class="comment" @click="$emit('readyToReply')">
           <svg-icon className="icon-31pinglun" class="icon" />
           <span>回复</span>
         </div>
