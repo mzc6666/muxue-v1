@@ -4,12 +4,12 @@
  * @Autor: mzc
  * @Date: 2023-03-01 22:07:45
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-02 17:10:16
+ * @LastEditTime: 2023-03-02 21:39:01
  */
 
 import EVENTS from "@constants/events";
 
-const socket : WebSocket = new WebSocket("ws://localhost:8888");
+const socket : WebSocket = new WebSocket("ws://localhost:8080");
 
 socket.onopen = () => {
   console.log("websocket connect established!!!");
@@ -24,7 +24,7 @@ socket.onclose = () => {
 }
 
 socket.onmessage = (event) => {
-  const { eventName, ...otherData } = event.data;
+  const { eventName, ...otherData } = JSON.parse(event.data);
   eventGroup.get(eventName)?.forEach(action => void action(otherData));
 }
 

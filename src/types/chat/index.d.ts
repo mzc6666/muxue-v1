@@ -1,5 +1,10 @@
 declare interface ChattingPersonItem {
-  user: {
+  sender: {
+    userId: number;
+    username: string;
+    cover: string;
+  },
+  receiver: {
     userId: number;
     username: string;
     cover: string;

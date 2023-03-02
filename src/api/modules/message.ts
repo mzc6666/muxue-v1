@@ -1,3 +1,11 @@
+/*
+ * @Description: 
+ * @Version: 
+ * @Autor: mzc
+ * @Date: 2023-03-02 17:10:23
+ * @LastEditors: mzc
+ * @LastEditTime: 2023-03-03 00:57:35
+ */
 import socket,{dispatchSocketEvent} from "@apis/websocket";
 import { SEND_MESSAGE_EVENT } from "@constants/events";
 
@@ -15,3 +23,5 @@ export const sendMessageToFriend = (id: number, content: string) => {
     content
   })
 }
+
+export const sendMessageToGroup = () => {}
