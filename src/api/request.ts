@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-04 21:11:37
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-05 17:36:50
+ * @LastEditTime: 2023-03-02 14:39:16
  */
 import axios, { Axios, AxiosRequestConfig } from "axios";
 import {
@@ -17,7 +17,6 @@ import {
   TOKEN_ERROR,
 } from "@constants/network/status";
 import { Message } from "@/utils/public";
-
 /**
  * @description: 基础的封装请求
  * @param {AxiosRequestConfig} config axios配置对象
@@ -31,7 +30,7 @@ export const request = function (config: AxiosRequestConfig, events: Events) {
   instances.interceptors.request.use(
     function (config: any) {
       // 添加token
-      config.headers.token = window.localStorage.getItem("token");
+      config.headers.token = localStorage.getItem("token") ?? '';
       return config;
     },
     function (err) {
@@ -48,7 +47,6 @@ export const request = function (config: AxiosRequestConfig, events: Events) {
           break;
         /* 登录失败 */
         case LOGIN_ERROR.code:
-          window.localStorage.removeItem("token");
           return Promise.reject(LOGIN_ERROR.msg);
         /* 服务端异常，登录失败 */
         case LOGIN_SERVER_ERROR.code:

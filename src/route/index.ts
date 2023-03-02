@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-04 19:31:22
  * @LastEditors: mzc
- * @LastEditTime: 2023-02-13 22:04:02
+ * @LastEditTime: 2023-03-02 14:34:03
  */
 import {
   createRouter,
@@ -20,6 +20,7 @@ import community from "./modules/community";
 import course from "./modules/course";
 import resourceSquare from "./modules/resource-square";
 import studyRoom from "./modules/study-room";
+
 
 const router = createRouter({
   routes: [
@@ -72,8 +73,14 @@ const router = createRouter({
 
 // 全局守卫
 router.beforeEach((to, from, next) => {
+  // 没有token，仅可访问一些页面
+  if (JSON.parse(localStorage.getItem("user-store") as string).token || [DOWNLOAD,HOME,LOGIN].includes(to.name as string)) {
+    next();
+  }  else {
+    next({name: LOGIN})
+  }
+  // next();
   document.title = String(to.meta.title);
-  next();
 });
 
 export default router;

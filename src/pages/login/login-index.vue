@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-04 19:57:24
  * @LastEditors: mzc
- * @LastEditTime: 2022-08-24 10:28:13
+ * @LastEditTime: 2023-03-02 14:17:54
 -->
 <script setup lang="ts">
 import InputItem from "./components/Input/input.vue";
@@ -16,7 +16,10 @@ import {
   loginByAuthCode,
   LoginByPassword,
 } from "@apis/modules/login";
-import { LOGIN, MAIN } from "@constants/route";
+import {  MAIN } from "@constants/route";
+import { useUserStore } from '@/store'
+
+const userStore = useUserStore();
 
 /*  验证码登录 */
 const login_authCode = reactive({
@@ -27,16 +30,20 @@ const login_authCode = reactive({
       verifyTel(login_authCode.telephone) &&
       verifyAuthCode(login_authCode.authCode)
     ) {
+      if (!autoRegister.value) {
+        return;
+      }
       loginByAuthCode(login_authCode.telephone, login_authCode.authCode)
         .then((res) => {
           console.log("loginByAuthCode res",res);
+          userStore.setToken(res.data.data);
           if (nextAutoLogin.value) {
             window.localStorage.setItem("token", res.data.data);
           }
           router.push({ name: MAIN });
         })
         .catch((err) => {
-          console.log("loginByAuthCode", err);
+          console.log("loginByAuthCode error: ", err);
         });
     } else {
       Message("error", "信息错误，请重新输入");
@@ -52,6 +59,7 @@ const login_pass = reactive({
       LoginByPassword(login_pass.telephone, login_pass.password)
         .then((res) => {
           console.log("LoginByPassword res", res);
+          userStore.setToken(res.data.data);
           if (nextAutoLogin.value) {
             window.localStorage.setItem("token", res.data.data);
           }

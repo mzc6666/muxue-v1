@@ -4,8 +4,12 @@
  * @Autor: mzc
  * @Date: 2022-08-08 16:16:56
  * @LastEditors: mzc
- * @LastEditTime: 2022-08-22 22:12:51
+ * @LastEditTime: 2023-03-02 14:38:43
  */
 import useResourcesStore from "./modules/resource";
+import useUserStore from "./modules/user";
 
-export { useResourcesStore };
+import { createPinia } from "pinia";
+
+
+export { useResourcesStore,useUserStore };

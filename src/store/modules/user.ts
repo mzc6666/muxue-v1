@@ -1,33 +1,28 @@
-/*
- * @Description:
- * @Version:
- * @Autor: mzc
- * @Date: 2022-08-22 21:15:42
- * @LastEditors: mzc
- * @LastEditTime: 2022-08-22 21:36:54
- */
-import { defineStore } from "pinia";
-import { reactive, ref } from "vue";
+ import { defineStore } from 'pinia'
+import { ref, type Ref } from 'vue'
 
-const useUserStore = defineStore(
-  "user",
-  () => {
-    const age = ref(20);
-    const changeAge = (newAge: number) => {
-      age.value = newAge;
-    };
+ const useUserStore = defineStore("user",() => {
+    const token : Ref<string> = ref('');
+
+    const setToken = (token_value: string) => void (token.value = token_value)
+
+    const clearToken = () => void (token.value = '');
+    
     return {
-      age,
-      changeAge,
-    };
-  },
-  {
-    persist: {
-      key: "userInfo-stata",
-      storage: window.sessionStorage,
-      paths: ["age"],
-    },
+      token,
+      setToken,
+      clearToken
+    }
+ }, {
+  persist: {
+    enabled: true,
+    strategies: [
+      {
+        key: 'user-store',
+        storage: localStorage
+      }
+    ]
   }
-);
+ })
 
 export default useUserStore;
