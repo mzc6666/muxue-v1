@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-08 15:10:16
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-09 00:14:57
+ * @LastEditTime: 2023-03-02 17:27:02
 -->
 <script setup lang="ts">
 import {
@@ -16,6 +16,15 @@ import {
   MAIN_COMMUNITY,
   MAIN_RESOURCE_MYRESOURCE,
 } from "@constants/route";
+import { useMessageStore } from '@/store';
+import { onMounted } from 'vue';
+import {registerSocketEventListener} from '@/api/websocket'
+import { RECEIVE_MESSAGE_EVENT } from '@/constant/events'
+const messageStore = useMessageStore();
+
+onMounted(() => {
+  registerSocketEventListener(RECEIVE_MESSAGE_EVENT,messageStore.addMessageToReposity); // 接收消息事件
+})
 </script>
 <template>
   <main>

@@ -8,8 +8,9 @@
  */
 import useResourcesStore from "./modules/resource";
 import useUserStore from "./modules/user";
+import useMessageStore from "./modules/message";
 
 import { createPinia } from "pinia";
 
 
-export { useResourcesStore,useUserStore };
+export { useResourcesStore,useUserStore ,useMessageStore};
