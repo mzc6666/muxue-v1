@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-04 17:41:28
  * @LastEditors: mzc
- * @LastEditTime: 2023-01-06 23:37:22
+ * @LastEditTime: 2023-03-04 17:34:11
  */
 import * as naive from "naive-ui";
 export const {
@@ -26,4 +26,8 @@ export const {
   NRadio,
   NCascader,
   NCollapse,
+  NMenu,
+  NTag,
+  NInputGroup,
+  NModal,
 } = naive;

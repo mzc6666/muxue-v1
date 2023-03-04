@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-12-23 19:43:11
  * @LastEditors: mzc
- * @LastEditTime: 2022-12-24 15:18:44
+ * @LastEditTime: 2023-03-04 13:35:32
  */
 
 /**
@@ -31,4 +31,19 @@ declare interface ChapterItem {
   chId: number;
   chName: string;
   sections: Array<SectionItem>;
+}
+
+
+declare interface CourseCommenInterface {
+  commentId: number,
+  user: {
+    username: string;
+    userId: number;
+    avatar: string;
+  };
+  likesCount: number;
+  isLike: boolean;
+  content: string;
+  time: string;
+  isOwn: boolean;
 }

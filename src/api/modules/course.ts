@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-12-23 18:33:05
  * @LastEditors: mzc
- * @LastEditTime: 2023-01-06 20:29:13
+ * @LastEditTime: 2023-03-04 16:30:45
  */
 import { get, post, Delete } from "../request";
 
@@ -262,6 +262,121 @@ export const AddNewTask = (
         chId,
         secId,
         ...options,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 获取课程一级评论
+ * @param {number} cId 课程Id
+ * @param {Events} events
+ * @return {*}
+ * @author: mzc
+ */
+export const getCourseComment = (
+  cId: number,
+  time = new Date().toISOString(),
+  events: Events = {}
+) => {
+  return get(
+    {
+      url: "courses/comment/topLevel",
+      params: {
+        cId,
+        time,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 获取评论的子评论
+ * @param {number} commentId 一级评论ID
+ * @param {Events} events 事件对象
+ * @return {*}
+ * @author: mzc
+ */
+export const getCourseSonComments = (
+  commentId: number,
+  events: Events = {}
+) => {
+  return get(
+    {
+      url: "/courses/comment/sonLevel",
+      params: {
+        commentId,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 对课程评论
+ * @param {number} cId 课程ID
+ * @param {string} content 评论内容
+ * @param {Events} events 事件对象
+ * @return {*}
+ * @author: mzc
+ */
+export const makeCommentToCouse = (
+  cId: number,
+  content: string,
+  events: Events = {}
+) => {
+  return post(
+    {
+      url: "/courses/comment",
+      data: {
+        cId,
+        content,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 评论一级评论
+ * @param {number} commentId 一级评论iD
+ * @param {string} content 评论内容
+ * @param {Events} events 事件对象
+ * @return {*}
+ * @author: mzc
+ */
+export const makeCommentToFirstLevel = (
+  commentId: number,
+  content: string,
+  events: Events = {}
+) => {
+  return post(
+    {
+      url: "/courses/comment/reply",
+      data: {
+        commentId,
+        content,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 点赞/ 取消点赞 评论
+ * @param {number} commentId
+ * @param {Events} events
+ * @return {*}
+ * @author: mzc
+ */
+export const handleGiveLike = (commentId: number, events: Events = {}) => {
+  return post(
+    {
+      url: "/courses/comment/agree",
+      data: {
+        commentId,
       },
     },
     events

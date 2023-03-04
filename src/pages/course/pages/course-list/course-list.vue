@@ -4,10 +4,10 @@
  * @Autor: mzc
  * @Date: 2022-12-23 19:34:44
  * @LastEditors: mzc
- * @LastEditTime: 2022-12-30 19:39:44
+ * @LastEditTime: 2023-03-04 17:30:46
 -->
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, computed } from "vue";
 import { useCourseList } from "./hook";
 import { getCourseList, createNewCourse } from "@/api/modules/course";
 import router from "@/route";
@@ -19,7 +19,6 @@ import CircleCheckBox from "@components/circle-checkbox/index.vue";
 import Modal from "@/components/Modal/index.vue";
 import Input from "@/components/Input/index.vue";
 
-const searchValue = ref<string>(""); // 输入框内容
 // 添加课程
 const addCourse = reactive({
   show: false,
@@ -28,6 +27,24 @@ const addCourse = reactive({
 });
 
 const { courses, error, waiting, addCourseItem } = useCourseList();
+
+const searchValue = ref<string>(""); // 输入框内容
+
+const renderList = computed(() => {
+  return courses.value?.reduce(
+    (
+      total: { data: ClassItem; index: number }[],
+      current: ClassItem,
+      index: number
+    ) => {
+      return searchValue.value === "" ||
+        current.cName.indexOf(searchValue.value) !== -1
+        ? total.concat({ data: current, index })
+        : total;
+    },
+    [] as { data: ClassItem; index: number }[]
+  );
+});
 
 /**
  * @description: 路由跳转
@@ -76,25 +93,36 @@ const handleCreateNewCourse = () => {
   <div>
     <div class="container" v-if="courses">
       <header>
-        <div class="button-group">
-          <Button :style="{ color: '#FFF' }" @click="addCourse.show = true"
-            ><span>添加课程</span></Button
-          >
-        </div>
         <n-input
+          class="text"
           type="text"
-          :style="{ width: '400px' }"
-          placeholder="基本的 Input"
+          :style="{ width: '50%' }"
+          placeholder="搜索课程"
           v-model:value="searchValue"
         />
+        <!-- <Button :style="{ color: '#FFF' }" @click="addCourse.show = true"
+          ><span>添加课程</span></Button
+        > -->
+        <n-button
+          strong
+          secondary
+          type="primary"
+          @click="addCourse.show = true"
+        >
+          添加课程
+        </n-button>
       </header>
       <div class="course-lists">
         <div class="lists-content">
-          <div class="class-item" v-for="item in courses" :key="item.cId">
+          <div
+            class="class-item"
+            v-for="item in renderList"
+            :key="item.data.cId"
+          >
             <!-- <span>删除</span> -->
             <course-item
-              v-bind="item"
-              @click="navigateToDetailPage(item.cId)"
+              v-bind="item.data"
+              @click="navigateToDetailPage(item.data.cId)"
             />
           </div>
         </div>
@@ -145,19 +173,13 @@ const handleCreateNewCourse = () => {
   overflow-y: auto;
   header {
     height: 125px;
-    padding: 0 rem(50);
+    padding: 0 rem(25);
+    padding-right: rem(50);
     // border-bottom: 1px solid red;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    div.button-group {
-      display: flex;
-      > :nth-child(1) {
-        margin-right: 25px;
-      }
-      span {
-        white-space: nowrap;
-      }
+    .text {
+      margin-right: rem(40);
     }
   }
   .course-lists {

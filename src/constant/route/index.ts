@@ -26,6 +26,9 @@ export const MAIN_CHATTING = "main-chatting";
 export const MAIN_COURSE = "main-course";
 export const MAIN_COURSE_LISTS = "main-course-lists";
 export const MAIN_COURSE_ITEM = "main-course-item";
+export const MAIN_COURSE_ITEM_CONTENT = 'main-course-item-content'
+export const MAIN_COURSE_ITEM_COMMENTS = 'main-course-item-comments'
+export const MAIN_COURSE_ITEM_TITLE_DETAIL = 'main-course-item-title-detail'
 export const MAIN_COURSE_TASKS = "main-course-tasks";
 
 export const MAIN_STUDYROOM = "main-studyRoom";

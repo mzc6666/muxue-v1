@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-12-23 23:33:59
  * @LastEditors: mzc
- * @LastEditTime: 2023-01-06 21:31:02
+ * @LastEditTime: 2023-03-04 17:04:58
 -->
 <script setup lang="ts">
 import {
@@ -17,14 +17,19 @@ import {
   SectionDelete,
   AddNewTask,
 } from "@/api/modules/course";
-import { onMounted, reactive, ref, watchEffect, watch } from "vue";
+import { onMounted, reactive, ref, watchEffect, watch, h } from "vue";
 import { Message, Dialog } from "@/utils/public";
 import Button from "../../components/Button/index.vue";
 import ChapterItem from "../../components/chapter-item/chapter-item.vue";
 import Modal from "@/components/Modal/index.vue";
 import FileSelect from "@/pages/resources/components/file-select/file-select.vue";
 import Router from "@/route";
-import { MAIN_COURSE_TASKS } from "@/constant/route/index";
+import {
+  MAIN_COURSE_ITEM_COMMENTS,
+  MAIN_COURSE_ITEM_CONTENT,
+  MAIN_COURSE_TASKS,
+} from "@/constant/route/index";
+import { RouterLink } from "vue-router";
 
 const props = defineProps<{
   cId: number;
@@ -245,226 +250,57 @@ const handleLookTasks = (chId: number, secId: number) => {
     params: { cId: props.cId, chId, secId },
   });
 };
+
+const menuOptions = reactive([
+  {
+    label: () =>
+      h(
+        RouterLink,
+        {
+          to: {
+            name: MAIN_COURSE_ITEM_CONTENT,
+          },
+        },
+        { default: () => "课程内容" }
+      ),
+    key: MAIN_COURSE_ITEM_CONTENT,
+  },
+  {
+    label: () =>
+      h(
+        RouterLink,
+        {
+          to: {
+            name: MAIN_COURSE_ITEM_COMMENTS,
+          },
+        },
+        { default: () => "课程讨论" }
+      ),
+    key: MAIN_COURSE_ITEM_COMMENTS,
+  },
+]);
 </script>
 <template>
-  <div class="container">
-    <header>
-      <Button @click="addChapter.flag = true"><span>新增章节</span></Button>
-    </header>
-    <main>
-      <div class="item-container">
-        <div class="item-group">
-          <!-- 新增 章节 -->
-          <div class="add-chapter" v-if="addChapter.flag">
-            <div class="left-input">
-              <n-input
-                v-model:value="addChapter.text"
-                type="text"
-                placeholder="输入章节名称"
-              />
-            </div>
-            <div class="button-groups">
-              <Button class="button" @click="handleChapterAdd"
-                ><span>确定</span></Button
-              >
-              <Button
-                class="button"
-                @click="
-                  () => {
-                    addChapter.flag = false;
-                    addChapter.text = '';
-                  }
-                "
-                ><span>取消</span></Button
-              >
-            </div>
-          </div>
-          <ChapterItem
-            :style="{ margin: '8px 0', cursor: 'pointer' }"
-            v-for="(item, index) in courseContent"
-            :key="item.chId"
-            v-bind:data="item"
-            :onChapterEdit="onChapterEdit(item.chId, index)"
-            :onChapterDelete="handleChapterDelete(item.chId, index)"
-            :onAddSection="handleSectionAdd(item.chId, index)"
-            :onSectionEdit="handleSectionEdit(item.chId, index)"
-            :onSectionDelete="handleSectionDelete(item.chId, index)"
-            @addTask="
-              (secId, secondIndex) => {
-                addTask = true;
-                addTaskChIndex = index;
-                addTaskChid = item.chId;
-                addTaskSecid = secId;
-                addTaskSecIndex = secondIndex;
-              }
-            "
-            @look-tasks="handleLookTasks"
-          >
-          </ChapterItem>
-        </div>
-      </div>
-    </main>
-    <!-- 添加任务点 -->
-    <Modal
-      show
-      hasNegative
-      v-if="addTask"
-      @update:show="addTask = false"
-      @active-btn-click="hanleTaskAdd"
-    >
-      <template #header>
-        <span>新增任务点</span>
-      </template>
-      <template #body>
-        <div class="task-name-input">
-          <n-input
-            v-model:value="addTaskInfo.name"
-            type="text"
-            placeholder="输入任务名"
-          />
-        </div>
-        <div class="task-file-select">
-          <div class="select-options">
-            <n-radio
-              :checked="addTaskInfo.selectType === otherType"
-              name="select-type"
-              @change="addTaskInfo.selectType = 'other'"
-            >
-              其他文件
-            </n-radio>
-            <n-radio
-              :checked="addTaskInfo.selectType === resourceType"
-              name="select-type"
-              @change="addTaskInfo.selectType = 'resource'"
-            >
-              我的资源内文件
-            </n-radio>
-          </div>
-          <div class="select-file">
-            <n-upload
-              :default-upload="false"
-              :max="1"
-              v-show="addTaskInfo.selectType === otherType"
-              @change="selectFile"
-            >
-              <n-upload-dragger>
-                <n-text style="font-size: 16px">
-                  点击或者拖动文件到该区域来上传
-                </n-text>
-                <n-p depth="3" style="margin: 8px 0 0 0">
-                  请上传任务点指定的文件
-                </n-p>
-              </n-upload-dragger>
-            </n-upload>
-            <div
-              class="button-upload"
-              v-show="addTaskInfo.selectType === resourceType"
-            >
-              <FileSelect v-model:file="addTaskInfo.resourceFile"></FileSelect>
-            </div>
-          </div>
-        </div>
-      </template>
-    </Modal>
+  <div class="container1">
+    <aside>
+      <n-menu
+        :options="menuOptions"
+        :default-expanded-keys="[MAIN_COURSE_ITEM_CONTENT]"
+      />
+    </aside>
+    <router-view class="route-content"></router-view>
   </div>
 </template>
 <style scoped lang="scss">
-.container {
-  // display: flex;
-  // flex-direction: column;
-  overflow-y: auto;
-  header {
-    height: 125px;
-    padding: 0 rem(50);
-    // border-bottom: 1px solid red;
-    display: flex;
-    align-items: center;
-    span {
-      color: #fff;
-      white-space: nowrap;
-    }
-  }
-  main {
-    // flex: 1;
-    // overflow-y: auto;
-    .item-container {
-      padding: 0 rem(25);
-      .item-group {
-        padding: 0 rem(25);
-        .add-chapter {
-          padding: 8px 20px;
-          display: flex;
-          justify-content: space-between;
-          background-color: map-get($map: $gray-colors, $key: 100);
-          .button-groups {
-            display: flex;
-            .button {
-              padding: 6px 12px;
-            }
-            .button:last-child {
-              background-color: map-get($map: $gray-colors, $key: 400);
-              margin-left: 20px;
-            }
-            span {
-              white-space: nowrap;
-              color: #fff;
-              font-size: 14px;
-            }
-          }
-        }
-        .sub-section {
-          display: flex;
-          padding: 12px 20px;
-          justify-content: space-between;
-          .left {
-            display: flex;
-            .circle-task-count {
-              width: 24px;
-              height: 24px;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              border-radius: 50%;
-              font-size: 12px;
-              color: #fff;
-              background-color: map-get($map: $green-colors, $key: 600);
-              // text-align: center;
-            }
-            span {
-              margin-left: 20px;
-            }
-          }
-          .right-btns {
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            .icons {
-              margin-right: 20px;
-            }
-            .icons:last-child {
-              margin-right: 0;
-            }
-          }
-          &:hover .right-btns {
-            opacity: 1;
-          }
-        }
-      }
-    }
-  }
-}
 /* 上传任务点css */
-.task-name-input {
-  padding: 10px 0;
-}
-.task-file-select {
-  .select-options {
+.container1 {
+  display: flex;
+  aside {
+    width: 160px;
+    padding-top: 1em;
   }
-  .select-file {
-    .button-upload {
-      padding: 10px 0;
-      display: flex;
-      justify-content: center;
-    }
+  .route-content {
+    flex: 1;
   }
 }
 </style>
