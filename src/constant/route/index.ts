@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-20 14:24:47
  * @LastEditors: mzc
- * @LastEditTime: 2023-01-06 20:44:37
+ * @LastEditTime: 2023-03-05 23:11:13
  */
 export const LOGIN = "login";
 
@@ -26,13 +26,17 @@ export const MAIN_CHATTING = "main-chatting";
 export const MAIN_COURSE = "main-course";
 export const MAIN_COURSE_LISTS = "main-course-lists";
 export const MAIN_COURSE_ITEM = "main-course-item";
-export const MAIN_COURSE_ITEM_CONTENT = 'main-course-item-content'
-export const MAIN_COURSE_ITEM_COMMENTS = 'main-course-item-comments'
-export const MAIN_COURSE_ITEM_TITLE_DETAIL = 'main-course-item-title-detail'
+export const MAIN_COURSE_ITEM_CONTENT = "main-course-item-content";
+export const MAIN_COURSE_ITEM_COMMENTS = "main-course-item-comments";
+export const MAIN_COURSE_ITEM_TITLE_DETAIL = "main-course-item-title-detail";
 export const MAIN_COURSE_TASKS = "main-course-tasks";
 
 export const MAIN_STUDYROOM = "main-studyRoom";
 
 export const MAIN_RESOURCESQUARE = "main-resourceSquare";
+export const MAIN_RESOURCESQUARE_HOME = "main-resource-square-home";
+export const MAIN_RESOURCESQUARE_RANKS = "main-resources-square-ranks";
+export const MAIN_RESOURCESQUARE_ITEM_DETAIL = "main-resource-item-detail";
+export const MAIN_RESOUCESQUARE_SEARCH = "main-resource-search";
 
 export const MAIN_COMMUNITY = "main-community";

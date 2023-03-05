@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-20 13:53:20
  * @LastEditors: mzc
- * @LastEditTime: 2022-10-04 15:14:20
+ * @LastEditTime: 2023-03-05 14:09:26
 -->
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
@@ -294,8 +294,8 @@ const onPublic = async (id: number, index: number) => {
  * @author: mzc
  */
 
-const createNewResource = (name: string) => {
-  createResource(props.sId, name)
+const createNewResource = (name: string, image: File) => {
+  createResource(props.sId, name, image)
     .then((res) => {
       if (res.data.code == "200") {
         Message("info", res.data.msg);

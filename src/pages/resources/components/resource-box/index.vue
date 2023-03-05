@@ -4,14 +4,16 @@
  * @Autor: mzc
  * @Date: 2022-08-21 15:20:57
  * @LastEditors: mzc
- * @LastEditTime: 2022-10-04 15:29:57
+ * @LastEditTime: 2023-03-05 15:13:32
 -->
 <script setup lang="ts">
 import { useEvent } from "@/hooks";
-import { getTimeString } from "@/utils/public";
+import { getTimeString, Message } from "@/utils/public";
 import { nextTick, reactive, ref, watchEffect } from "vue";
 import Checkbox from "../checkbox/index.vue";
 import SvgIcon from "@components/svg-icon/svg-icon.vue";
+import { ArchiveOutline as ArchiveIcon } from "@vicons/ionicons5";
+import { emit } from "process";
 
 // props
 const props = withDefaults(
@@ -22,6 +24,7 @@ const props = withDefaults(
     isPublic: 0 | 1 | 2;
     size: number;
     isCollection: boolean;
+    image: string;
     showWay?: "horizontal" | "vertical";
     hasSelect: boolean;
     handleSelect?: (event?: Event) => void;
@@ -44,6 +47,7 @@ const emits = defineEmits([
   "onDetails",
   "onDelete",
   "click",
+  "onChangeImage",
 ]);
 
 const dropDown = reactive({
@@ -140,6 +144,16 @@ watchEffect(() => {
       },
     },
   };
+  permissions.changeImage = {
+    label: "修改封面图",
+    key: "change-image",
+    props: {
+      onclick: fnWithClose(() => {
+        // emits("onChangeImage", props.sId);
+        change_visible.value = true;
+      }),
+    },
+  };
 });
 
 const rights = reactive<any>([]);
@@ -152,6 +166,7 @@ watchEffect(() => {
       permissions.download,
       permissions.share,
       permissions.collect,
+      permissions.changeImage,
       permissions.details
     );
   } else {
@@ -163,6 +178,7 @@ watchEffect(() => {
       permissions.move,
       permissions.reName,
       permissions.details,
+      permissions.changeImage,
       permissions.delete
     );
   }
@@ -194,6 +210,24 @@ const handleContextMenu = (e: any) => {
     dropDown.x = e.clientX;
     dropDown.y = e.clientY;
   });
+};
+
+const change_visible = ref(false); // 修改封面图显示
+const image = ref(null);
+// 封面图选择
+const handleFileSelect = (args: any) => {
+  // console.log("args: ", args)
+  image.value = args.file.file;
+};
+
+// 触发修改图片事件
+const handleChange = () => {
+  if (image.value) {
+    emits("onChangeImage", image.value);
+    change_visible.value = false;
+  } else {
+    Message("warning", "请选择图片");
+  }
 };
 </script>
 <template>
@@ -265,6 +299,38 @@ const handleContextMenu = (e: any) => {
       }
     "
   />
+  <!-- 修改封面图 -->
+  <n-modal v-model:show="change_visible">
+    <n-card
+      style="width: 600px"
+      title="修改封面图"
+      size="huge"
+      role="dialog"
+      aria-modal="true"
+    >
+      <n-upload :default-upload="false" :max="1" @change="handleFileSelect">
+        <n-upload-dragger>
+          <div style="margin-bottom: 12px">
+            <n-icon size="48" :depth="3">
+              <archive-icon />
+            </n-icon>
+          </div>
+          <n-text style="font-size: 16px">
+            点击或者拖动文件到该区域来上传
+          </n-text>
+          <n-p depth="3" style="margin: 8px 0 0 0">修改封面图以供广场检索 </n-p>
+        </n-upload-dragger>
+      </n-upload>
+      <template #footer>
+        <div class="button-groups">
+          <n-button type="primary" @click="handleChange"> 确定 </n-button
+          ><n-button type="error" @click="change_visible = false">
+            取消
+          </n-button>
+        </div>
+      </template>
+    </n-card>
+  </n-modal>
 </template>
 <style scoped lang="scss">
 .resource-box {
@@ -335,5 +401,12 @@ const handleContextMenu = (e: any) => {
       }
     }
   }
+}
+.button-groups {
+  display: flex;
+  flex-direction: row-reverse;
+}
+.button-groups > * {
+  margin-left: 2em;
 }
 </style>

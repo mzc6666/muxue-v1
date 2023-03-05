@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-20 13:52:24
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-02 16:54:01
+ * @LastEditTime: 2023-03-05 15:31:45
 -->
 <script setup lang="ts">
 import { reactive, ref } from "vue";
@@ -180,8 +180,8 @@ const modal1 = reactive({
  * @author: mzc
  */
 
-const createNewResource = (name: string) => {
-  createResource(0, name)
+const createNewResource = (name: string, image: File) => {
+  createResource(0, name, image)
     .then((res) => {
       if (res.data.code == "200") {
         Message("info", res.data.msg);

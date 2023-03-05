@@ -4,13 +4,15 @@
  * @Autor: mzc
  * @Date: 2022-08-30 16:20:35
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-09 14:59:01
+ * @LastEditTime: 2023-03-05 12:20:06
 -->
 
 <script setup lang="ts">
 import Modal from "@components/Modal/index.vue";
 import Input from "@/components/Input/index.vue";
+import { ArchiveOutline as ArchiveIcon } from "@vicons/ionicons5";
 import { Ref, ref, watch, watchEffect } from "vue";
+import { Message } from "@/utils/public";
 
 const props = withDefaults(
   defineProps<{
@@ -42,9 +44,18 @@ watch(
  */
 
 const handleActiveClick = () => {
-  props.type === "r"
-    ? emits("createResource", name.value)
-    : emits("createFolder", name.value);
+  // props.type === "r"
+  //   ? emits("createResource", name.value, image.value)
+  //   : emits("createFolder", name.value);
+  if (props.type === "r") {
+    if (image.value) {
+      emits("createResource", name.value, image.value);
+    } else {
+      Message("warning", "请选择封面图片!!!");
+    }
+  } else if (props.type === "f") {
+    emits("createFolder", name.value);
+  }
 };
 
 /**
@@ -55,6 +66,13 @@ const handleActiveClick = () => {
 
 const handleNegativeClick = () => {
   emits("update:show", false);
+};
+
+const image = ref<File>();
+
+const handleFileSelect = (args: any) => {
+  // console.log("args: ", args)
+  image.value = args.file.file;
 };
 </script>
 <template>
@@ -73,6 +91,21 @@ const handleNegativeClick = () => {
           class="resource-item"
         ></svg-icon>
         <Input type="text" v-model:value="name" v-select />
+        <n-upload :default-upload="false" :max="1" @change="handleFileSelect">
+          <n-upload-dragger>
+            <div style="margin-bottom: 12px">
+              <n-icon size="48" :depth="3">
+                <archive-icon />
+              </n-icon>
+            </div>
+            <n-text style="font-size: 16px">
+              点击或者拖动文件到该区域来上传
+            </n-text>
+            <n-p depth="3" style="margin: 8px 0 0 0"
+              >上传封面图以供广场检索
+            </n-p>
+          </n-upload-dragger>
+        </n-upload>
       </section>
     </template>
   </Modal>

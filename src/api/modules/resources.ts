@@ -112,6 +112,7 @@ export const getResourceInfo = (id: number, events: Events = {}) => {
 export const createResource = (
   rId: number,
   name: string,
+  image: File,
   events: Events = {}
 ) => {
   return post(
