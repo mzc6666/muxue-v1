@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-12-23 18:33:05
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-04 16:30:45
+ * @LastEditTime: 2023-03-07 13:17:22
  */
 import { get, post, Delete } from "../request";
 
@@ -377,6 +377,97 @@ export const handleGiveLike = (commentId: number, events: Events = {}) => {
       url: "/courses/comment/agree",
       data: {
         commentId,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 获取节的任务点
+ * @param {number} secId 节的ID
+ * @param {Events} events 事件对象
+ * @return {*}
+ * @author: mzc
+ */
+export const getTasks = (secId: number, events: Events = {}) => {
+  return get(
+    {
+      url: "/courses/task",
+      params: {
+        secId,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 完成任务点
+ * @param {number} tId 任务点ID
+ * @param {Events} events
+ * @return {*}
+ * @author: mzc
+ */
+export const accomplishTask = (tId: number, events: Events = {}) => {
+  return post(
+    {
+      url: "/courses/tasks/accomplish",
+      data: {
+        tId,
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 创建任务点
+ * @return {*}
+ * @author: mzc
+ */
+export const addTask = (
+  config: {
+    title: string;
+    type: "resources" | "other-file" | "other-text";
+    secId: number;
+    content: string | null;
+    fileId: number | null;
+    file: File | null;
+  },
+  events: Events = {}
+) => {
+  return post(
+    {
+      url: "/courses/task",
+      data: {
+        title: config.title,
+        type: config.type,
+        secId: config.secId,
+        content: config.type === "other-text" ? config.content : null,
+        fileId: config.type === "resources" ? config.fileId : null,
+        file: config.type === "other-file" ? config.file : null,
+      },
+      headers: {
+        "Content-type": "multipart/form-data",
+      },
+    },
+    events
+  );
+};
+
+/**
+ * @description: 删除任务点
+ * @param {number} tId 任务点ID
+ * @param {Events} events 事件对象
+ * @returns
+ */
+export const deleteTask = (tId: number, events: Events = {}) => {
+  return Delete(
+    {
+      url: "/courses/tasks",
+      params: {
+        tId,
       },
     },
     events

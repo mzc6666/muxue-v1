@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-12-24 14:59:53
  * @LastEditors: mzc
- * @LastEditTime: 2023-01-06 21:24:13
+ * @LastEditTime: 2023-03-09 16:06:34
 -->
 <script lang="ts">
 export default {
@@ -238,7 +238,13 @@ const SectionEditCancel = () => {
           @click="$emit('lookTasks', data.chId, item.secId)"
         >
           <div class="left" v-if="sectionEdit.index !== sonIndex">
-            <div class="circle-task-count">
+            <div
+              class="circle-task-count"
+              :style="{
+                backgroundColor:
+                  item.tasksNum === item.finishNum ? 'green' : 'red',
+              }"
+            >
               {{ item.tasksNum - item.finishNum }}
             </div>
             <span>{{ item.secName }}</span>

@@ -126,8 +126,22 @@ export const Throttle = (fn: Function, delay: number) => {
   };
 };
 
-
+/**
+ * @description: 切换存储单位表现形式
+ * @param {number} size byte为单位的数字
+ * @return {string} 如 `100MB`
+ * @author: mzc
+ */
 export const transformSize = (size: number) => {
   const mb = size / 1024 / 1024;
-  return mb.toFixed(2) + 'MB';
-}
+  return mb.toFixed(2) + "MB";
+};
+
+/**
+ * @description: 获取相机权限
+ * @param {MediaStreamConstraints} options 配置对象
+ * @return {Promise} 相机权限情况
+ * @author: mzc
+ */
+export const getCameraPermission = (options: MediaStreamConstraints) =>
+  navigator.mediaDevices.getUserMedia(options);

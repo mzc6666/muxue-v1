@@ -16,8 +16,8 @@ import {
   loginByAuthCode,
   LoginByPassword,
 } from "@apis/modules/login";
-import {  MAIN } from "@constants/route";
-import { useUserStore } from '@/store'
+import { MAIN } from "@constants/route";
+import { useUserStore } from "@/store";
 
 const userStore = useUserStore();
 
@@ -35,7 +35,7 @@ const login_authCode = reactive({
       }
       loginByAuthCode(login_authCode.telephone, login_authCode.authCode)
         .then((res) => {
-          console.log("loginByAuthCode res",res);
+          console.log("loginByAuthCode res", res);
           userStore.setToken(res.data.data);
           if (nextAutoLogin.value) {
             window.localStorage.setItem("token", res.data.data);
@@ -99,11 +99,10 @@ const verifyAuthCode = (value: string) => /^\d{6}$/.test(value);
 const msg = ref("发送验证码");
 const clickable = ref(true);
 const handleBtnClick = () => {
-  
   if (verifyTel(login_authCode.telephone)) {
     // console.log("telephone format is right");
     getAuthCode(login_authCode.telephone).then((res: any) => {
-      console.log("getAuthCode result",res)
+      console.log("getAuthCode result", res);
       if (res.data.code === "200") {
         clickable.value = false;
         let time = 59;
@@ -126,7 +125,7 @@ const handleBtnClick = () => {
 </script>
 <template>
   <div class="login-page">
-    <img />
+    <img src="logo.png" />
     <div class="multi-ways">
       <!-- options -->
       <ul class="tabs">
@@ -136,9 +135,9 @@ const handleBtnClick = () => {
         <li :class="[tagIndex === 1 ? 'active' : '']" @click="tagIndex = 1">
           账号登录
         </li>
-        <li :class="[tagIndex === 2 ? 'active' : '']" @click="tagIndex = 2">
+        <!-- <li :class="[tagIndex === 2 ? 'active' : '']" @click="tagIndex = 2">
           扫码登录
-        </li>
+        </li> -->
       </ul>
       <!-- forms -->
       <div class="forms">

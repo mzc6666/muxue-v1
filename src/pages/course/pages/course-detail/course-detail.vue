@@ -237,19 +237,6 @@ const hanleTaskAdd = async () => {
   addTask.value = false;
 };
 
-/**
- * @description: 查看任务点
- * @param { number } chId 章 ID
- * @param { number } secId 节 ID
- * @return {*}
- * @author: mzc
- */
-const handleLookTasks = (chId: number, secId: number) => {
-  Router.push({
-    name: MAIN_COURSE_TASKS,
-    params: { cId: props.cId, chId, secId },
-  });
-};
 
 const menuOptions = reactive([
   {

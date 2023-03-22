@@ -6,7 +6,7 @@
  * @LastEditors: mzc
  * @LastEditTime: 2022-08-30 09:57:36
  */
-import { onBeforeUnmount, onMounted, onUnmounted, unref } from "vue";
+import { onBeforeUnmount, onMounted, onUnmounted, ref, unref } from "vue";
 
 /**
  * @description: 组合式函数--事件
@@ -22,5 +22,25 @@ export const useEvent = (event: string, target: any, callback: Function) => {
   });
   onBeforeUnmount(() => {
     unref(target).removeEventListener(event, callback);
+  });
+};
+
+/**
+ * @description: 组合式函数-定时器
+ * @param {Function} fun 要执行的函数
+ * @param {number} gap 时间间隔
+ * @return {*}
+ * @author: mzc
+ */
+export const useInterval = (fun: Function, gap : number = 60) => {
+  let timer: any = null;
+  onMounted(() => {
+    timer = setInterval(() => {
+      fun();
+    }, gap);
+  });
+
+  onBeforeUnmount(() => {
+    clearInterval(timer);
   });
 };

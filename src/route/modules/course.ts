@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-20 15:08:53
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-04 17:09:38
+ * @LastEditTime: 2023-03-06 23:30:07
  */
 import { RouteRecordRaw } from "vue-router";
 import {
@@ -42,7 +42,7 @@ const course: RouteRecordRaw[] = [
         component: () =>
           import("@/pages/course/pages/course-detail/course-detail.vue"),
         props: (to) => ({ cId: Number(to.params.id) }),
-        redirect: {name: MAIN_COURSE_ITEM_CONTENT},
+        redirect: { name: MAIN_COURSE_ITEM_CONTENT },
         children: [
           {
             path: "content",
@@ -80,13 +80,11 @@ const course: RouteRecordRaw[] = [
         ],
       },
       {
-        path: "tasks/:cId(\\d+)/:chId(\\d+)/:secId(\\d+)",
+        path: "tasks/::secId(\\d+)",
         name: MAIN_COURSE_TASKS,
         component: () =>
           import("@/pages/course/pages/course-tasks/course-tasks.vue"),
         props: (to) => ({
-          cId: Number(to.params.cId),
-          chId: Number(to.params.chId),
           secId: Number(to.params.secId),
         }),
       },

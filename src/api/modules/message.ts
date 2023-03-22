@@ -4,9 +4,10 @@
  * @Autor: mzc
  * @Date: 2023-03-02 17:10:23
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-03 01:20:02
+ * @LastEditTime: 2023-03-16 16:52:08
  */
-import socket, { dispatchSocketEvent } from "@apis/websocket";
+
+import { sendData } from "@apis/websocket";
 import { SEND_MESSAGE_EVENT } from "@constants/events";
 
 /**
@@ -17,10 +18,7 @@ import { SEND_MESSAGE_EVENT } from "@constants/events";
  * @author: mzc
  */
 export const sendMessageToFriend = (id: number, content: string) => {
-  dispatchSocketEvent(SEND_MESSAGE_EVENT, {
-    resUserId: id,
-    content,
-  });
+  sendData({ eventName: SEND_MESSAGE_EVENT, id, content });
 };
 
 export const sendMessageToGroup = (groupId: number) => {};

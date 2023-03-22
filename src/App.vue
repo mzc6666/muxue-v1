@@ -7,9 +7,10 @@
  * @LastEditTime: 2023-03-02 21:15:26
 -->
 <script setup lang="ts">
-import { useUserStore,useMessageStore } from './store';
-import router from './route';
-import { MAIN_RESOURCE } from '@constants/route';
+import { useUserStore, useMessageStore } from "./store";
+import router from "./route";
+import { watch } from "vue";
+import { MAIN_RESOURCE } from "@constants/route";
 
 const userStore = useUserStore();
 
@@ -17,7 +18,6 @@ const userStore = useUserStore();
 //   router.replace({name: MAIN_RESOURCE})
 //   userStore.getInfoOfUser(); // 获取用户信息
 // }
-
 </script>
 <template>
   <router-view></router-view>

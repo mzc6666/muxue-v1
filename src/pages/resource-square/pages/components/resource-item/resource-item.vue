@@ -28,7 +28,9 @@ const emits = defineEmits(["onLike", "onCollect"]);
 <template>
   <div class="resoruce-item">
     <div class="left">
-      <img :src="image" alt="" />
+      <div class="image">
+        <img :src="image" alt="" />
+      </div>
       <div class="left-right">
         <div class="name">
           <p>{{ sName }}</p>
@@ -77,10 +79,16 @@ const emits = defineEmits(["onLike", "onCollect"]);
   .left {
     display: flex;
     align-items: center;
-    img {
-      width: 100px;
+    .image {
+      display: flex;
+      align-items: center;
+      min-height: 100px;
       margin-right: 1em;
+      img {
+        width: 100px;
+      }
     }
+
     .left-right {
       .name {
         display: flex;

@@ -47,3 +47,13 @@ declare interface CourseCommenInterface {
   time: string;
   isOwn: boolean;
 }
+
+declare interface CourseTaskInterface {
+  taskId: number;
+  title: string;
+  hasFinish: boolean;
+  isFile: boolean;
+  fileType: 'other' | "video" | null;
+  fileUrl: string | null;
+  content: string | null;
+}

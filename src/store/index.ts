@@ -12,6 +12,7 @@ import useMessageStore from "./modules/message";
 import useClassStore from "./modules/course";
 import useTasksStore from "./modules/tasks";
 import useResourceSquareStore from "./modules/resource-square";
+import useStudyRoomStore from "./modules/study-room";
 
 export {
   useResourcesStore,
@@ -20,4 +21,5 @@ export {
   useClassStore,
   useTasksStore,
   useResourceSquareStore,
+  useStudyRoomStore,
 };

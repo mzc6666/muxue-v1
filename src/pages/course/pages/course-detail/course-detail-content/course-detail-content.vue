@@ -242,7 +242,10 @@ const handleLookTasks = (chId: number, secId: number) => {
 <template>
   <div class="container">
     <header>
-      <Button @click="addChapter.flag = true"><span>新增章节</span></Button>
+      <!-- <Button @click="addChapter.flag = true"><span>新增章节</span></Button> -->
+      <n-tag :bordered="false" type="success" @click="addChapter.flag = true">
+        新增章节
+      </n-tag>
     </header>
     <main>
       <div class="item-container">
@@ -260,6 +263,14 @@ const handleLookTasks = (chId: number, secId: number) => {
               <Button class="button" @click="handleChapterAdd"
                 ><span>确定</span></Button
               >
+              <!-- <n-tag
+                :bordered="false"
+                class="button"
+                @click="handleChapterAdd"
+                type="success"
+              >
+                确定
+              </n-tag> -->
               <Button
                 class="button"
                 @click="
@@ -270,6 +281,19 @@ const handleLookTasks = (chId: number, secId: number) => {
                 "
                 ><span>取消</span></Button
               >
+              <!-- <n-tag
+                :bordered="false"
+                class="button"
+                @click="
+                  () => {
+                    addChapter.flag = false;
+                    addChapter.text = '';
+                  }
+                "
+                type="success"
+              >
+                取消
+              </n-tag> -->
             </div>
           </div>
           <ChapterItem

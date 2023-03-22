@@ -4,121 +4,119 @@
  * @Autor: mzc
  * @Date: 2022-08-20 15:07:16
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-03 01:15:35
+ * @LastEditTime: 2023-03-16 23:18:31
 -->
 <script setup lang="ts">
 import { useMessageStore, useUserStore } from "@/store";
-import socket from "@apis/websocket";
-import { computed, onMounted, watchEffect, ref } from "vue";
-import { storeToRefs } from "pinia";
-import { sendMessageToFriend } from "@apis/modules/message";
+import { ref } from "vue";
+import { sendMessageToFriend } from "@/api/modules/message";
 
 const messageStore = useMessageStore();
 const userStore = useUserStore();
 
-const { currentChatPersonId } = storeToRefs(messageStore);
-const { userInfo } = storeToRefs(userStore);
-
-const messages = computed(() => {
-  const map = new Map();
-  for (let key in messageStore.friendChattingRecord) {
-    map.set(Number(key), messageStore.friendChattingRecord[key]);
+// 格式化时间
+const formatTime = (timeStr: string) => {
+  const time = new Date(timeStr);
+  const now = new Date();
+  if (
+    time.getMonth() === now.getMonth() &&
+    time.getFullYear() === now.getFullYear() &&
+    time.getDate() === now.getDate()
+  ) {
+    return `${time.getHours() < 10 ? "0" + time.getHours() : time.getHours()}:${
+      time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes()
+    }`;
+  } else {
+    return `${time.getMonth()}月 ${time.getDate()} 日`;
   }
-  return map;
-});
+};
 
-// 当前聊天对象的姓名
-const chatting_name = computed(() => {
-  const record = messages.value.get(currentChatPersonId.value)[0];
-  return record.sender.userId === userInfo.value.id
-    ? record.receiver.username
-    : record.sender.username;
-});
+// 输入值
+const value = ref("");
 
-const text = ref(""); // 发送消息内容
-const handleSendMessage = () => {
-  sendMessageToFriend(currentChatPersonId.value, text.value);
-  text.value = "";
+// 发送内容
+const sendMessage = async () => {
+  if (value.value) {
+    sendMessageToFriend(userStore.userInfo.id, value.value);
+    value.value = "";
+  }
 };
 </script>
 <template>
   <div class="chatting-container">
-    <div class="person-list">
-      <!-- 添加好友/ 群组 -->
-      <div class="add-friend-group">
-        <div class="add-friend"></div>
+    <div class="left-section">
+      <div class="add">
+        <span>添加群聊</span>
+        <span>添加好友</span>
       </div>
       <div
-        v-for="([key, value], index) in messages.entries()"
-        :key="key"
-        class="person-item"
-        @click.stop="messageStore.setCurrentChaptPersonId(key)"
+        class="friend-item"
+        v-for="(item, index) in Object.keys(messageStore.records)"
+        :key="item"
+        @click="messageStore.setLookId(Number(item))"
       >
-        <div class="avatar">
-          <n-avatar
-            round
-            :size="48"
-            :src="
-              value[0].sender.userId == userInfo.id
-                ? value[0].receiver.cover
-                : value[0].sender.cover
-            "
-          />
-        </div>
-        <div class="text-content">
-          <div class="username">
-            <div>
-              {{
-                value[0].sender.userId == userInfo.id
-                  ? value[0].receiver.username
-                  : value[0].sender.username
-              }}
+        <n-avatar
+          round
+          :size="40"
+          :src="messageStore.records[item].info.cover"
+        />
+        <div class="right-info">
+          <div class="info-top">
+            <div class="username">
+              {{ messageStore.records[item].info.username }}
             </div>
-            <div class="time">{{ value[0].time }}</div>
+            <div class="time">
+              {{ formatTime(messageStore.records[item].messages.at(-1).time) }}
+            </div>
           </div>
-          <div class="latest-info">{{ value[value.length - 1].content }}</div>
+          <div class="bottom-info">
+            <div class="message">
+              {{ messageStore.records[item].messages.at(-1).content }}
+            </div>
+            <div class="not-look-num" v-if="messageStore.records[item].unRead">
+              {{ messageStore.records[item].unRead }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="chatting-list">
-      <!-- 无内容，占位置 -->
-      <div v-if="messageStore.currentChatPersonId === 0">无内容</div>
-      <!-- 内容 -->
-      <div v-else class="chatting-content">
-        <div class="header">
-          <div class="chat-person-name">{{ chatting_name }}</div>
-        </div>
-        <div class="message-list-container">
-          <div class="message-list">
-            <div
-              class="message-item"
-              :style="{
-                flexDirection:
-                  item.sender.userId === userInfo.id ? 'row-reverse' : 'row',
-              }"
-              v-for="(item, key) in messages.get(currentChatPersonId)"
-              :key="JSON.stringify(item)"
-            >
-              <div class="avatar">
-                <n-avatar round :size="40" :src="item.sender.cover" />
-              </div>
-              <div class="message-detail">
-                <p class="username">{{ item.sender.username }}</p>
-                <p class="send-content">{{ item.content }}</p>
-              </div>
+    <div class="right-section" v-if="messageStore.lookId !== -1">
+      <div class="top-userinfo">
+        <p>{{ messageStore.records[messageStore.lookId].info.username }}</p>
+      </div>
+      <div class="message-container">
+        <div class="message-content">
+          <div
+            class="message-item"
+            v-for="(item, index) in messageStore.records[messageStore.lookId]
+              .messages"
+            :key="item.time"
+            :style="{
+              flexDirection:
+                item.sender.userId === userStore.userInfo.id
+                  ? 'row-reverse'
+                  : 'row',
+            }"
+          >
+            <div class="avatar">
+              <n-avatar round :size="40" :src="item.sender.cover" />
+            </div>
+            <div class="info">
+              <div class="username">{{ item.sender.username }}</div>
+              <div class="message">{{ item.content }}</div>
             </div>
           </div>
         </div>
-        <div class="input-area">
-          <n-input
-            v-model:value="text"
-            type="textarea"
-            placeholder="按下Enter键发送消息"
-            autofocus
-            :autosize="{ minRows: 3, maxRows: 3 }"
-            @keydown.ctrl.enter="handleSendMessage"
-          />
-        </div>
+      </div>
+      <div class="bottom-send">
+        <n-input
+          type="textarea"
+          show-count
+          v-model:value="value"
+          placeholder="Enter键发送内容"
+          @keydown.ctrl.enter="sendMessage"
+        >
+        </n-input>
       </div>
     </div>
   </div>
@@ -126,89 +124,88 @@ const handleSendMessage = () => {
 <style scoped lang="scss">
 div.chatting-container {
   display: flex;
-  .person-list {
-    width: 340px;
-    height: 100%;
-    overflow: auto;
-    .person-item {
+  .left-section {
+    width: 300px;
+    border-right: 1px solid #e4e4e4;
+    .add {
+      display: flex;
+      .add span {
+        flex: 1;
+        text-align: center;
+        border: 1px solid #e4e4e4;
+        font-size: 14px;
+        line-height: 2;
+        cursor: pointer;
+      }
+    }
+    .friend-item {
       display: flex;
       align-items: center;
+      // border-right: 1px solid #e4e4e4;
+      padding: 0.5em;
       border-bottom: 1px solid #e4e4e4;
-      margin: 0 4px;
-      cursor: pointer;
-      background-color: #fff;
-      transition: all 0.5s;
-      .avatar {
-        padding: 10px;
-        padding-left: 20px;
-      }
-      .text-content {
-        display: flex;
+      .right-info {
         flex: 1;
-        flex-direction: column;
-        padding: 10px 30px 10px 10px;
-        .username {
+        padding-left: 1em;
+        font-size: 14px;
+        .info-top {
           display: flex;
           justify-content: space-between;
-          :first-child {
-            color: map-get($map: $gray-colors, $key: 600);
-          }
           .time {
-            font-size: 14px;
-            color: map-get($map: $gray-colors, $key: 400);
+            color: #666;
           }
         }
-      }
-      &:hover {
-        background-color: #e9e4f0;
+        .bottom-info {
+          display: flex;
+          justify-content: space-between;
+          .not-look-num {
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            background-color: red;
+            text-align: center;
+            font-weight: bold;
+            color: #fff;
+            font-size: 12px;
+            line-height: 20px;
+          }
+        }
       }
     }
   }
-  .chatting-list {
+  .right-section {
     flex: 1;
-    border-left: 1px solid #e4e4e4;
-    .chatting-content {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      .header {
-        padding: 20px 28px;
-        font-size: 20px;
-        font-weight: 600;
-        border-bottom: 1px solid #e4e4e4;
-      }
-      .message-list-container {
-        flex: 1;
-        position: relative;
-        .message-list {
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          overflow: auto;
-          .message-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 20px;
-            margin: 20px;
-            .message-detail {
-              padding-left: 1em;
-              /* padding-top: 2em; */
-              .username {
-                margin-bottom: 0.5em;
-              }
-              .send-content {
-                background: #f4f4f4;
-                padding: 6px 12px;
-                border-radius: 3px;
-              }
-            }
+    display: flex;
+    flex-direction: column;
+    .top-userinfo {
+      padding: 1em;
+      border-bottom: 1px solid #e4e4e4;
+    }
+    .message-container {
+      flex: 1;
+      position: relative;
+      overflow: auto;
+      .message-content {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        .message-item {
+          display: flex;
+          padding: 1em 0;
+          .avatar {
+            padding: 0 0.6em;
+          }
+          .username {
+            font-size: 14px;
+          }
+          .message {
+            border: 1px solid #e4e4e4;
+            padding: 4px 0.5em;
+            border-radius: 4px;
           }
         }
-      }
-      .input-area {
-        padding: 0 12px 12px;
       }
     }
   }

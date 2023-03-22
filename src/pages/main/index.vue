@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-08 15:10:16
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-02 17:27:02
+ * @LastEditTime: 2023-03-16 16:57:42
 -->
 <script setup lang="ts">
 import {
@@ -15,23 +15,36 @@ import {
   MAIN_RESOURCESQUARE,
   MAIN_COMMUNITY,
   MAIN_RESOURCE_MYRESOURCE,
+  LOGIN,
+  MAIN_MY_CENTER,
 } from "@constants/route";
-import { useMessageStore } from '@/store';
-import { onMounted } from 'vue';
-import {registerSocketEventListener} from '@/api/websocket'
-import { RECEIVE_MESSAGE_EVENT } from '@/constant/events'
+import { useMessageStore, useUserStore } from "@/store";
+import { onMounted } from "vue";
+import router from "@/route";
+import { addListener } from "@/api/websocket";
+import { RECEIVE_MESSAGE_EVENT } from "@constants/events";
+
 const messageStore = useMessageStore();
+const userStore = useUserStore();
+
+// 注册事件
+addListener(RECEIVE_MESSAGE_EVENT, messageStore.handleMessageArrived);
 
 onMounted(() => {
-  registerSocketEventListener(RECEIVE_MESSAGE_EVENT,messageStore.addMessageToReposity); // 接收消息事件
-})
+  userStore.getInfoOfUser();
+});
+
+// 退出
+const handleExit = () => {
+  router.replace({ name: LOGIN });
+};
 </script>
 <template>
   <main>
     <nav>
       <article class="left-top">
         <section class="logo">
-          <img src="" alt="" />
+          <img src="/logo.png" alt="" />
         </section>
         <ul>
           <li>
@@ -158,9 +171,36 @@ onMounted(() => {
               </a>
             </router-link>
           </li>
+          <li>
+            <router-link
+              :to="{ name: MAIN_MY_CENTER }"
+              custom
+              v-slot="{ isActive, navigate, href }"
+            >
+              <a
+                :href="href"
+                @click="navigate"
+                :class="[isActive ? 'active' : 'no-active', 'route-a']"
+              >
+                <svg-icon className="icon-shequ" class="item-icon"></svg-icon>
+                <span class="item-text">我的中心</span>
+              </a>
+            </router-link>
+          </li>
         </ul>
       </article>
-      <section class="left-bottom">sdfsdf</section>
+      <section class="left-bottom">
+        <n-dropdown
+          trigger="hover"
+          :options="[{ label: '退出登录', key: 'exit' }]"
+          @select="handleExit"
+        >
+          <div class="tag-info">
+            <n-avatar round size="medium" :src="userStore.userInfo.avatar" />
+            <span class="username">{{ userStore.userInfo.username }}</span>
+          </div>
+        </n-dropdown>
+      </section>
     </nav>
     <router-view class="router-view" v-slot="{ Component }">
       <keep-alive>
@@ -224,6 +264,18 @@ main {
   }
   > .router-view {
     flex: 1;
+  }
+}
+.tag-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  cursor: pointer;
+  /* background: red; */
+  span.username {
+    margin-left: 1em;
+    color: #fff;
   }
 }
 </style>

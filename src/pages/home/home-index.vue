@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-04 20:20:06
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-08 23:23:13
+ * @LastEditTime: 2023-03-09 13:37:39
 -->
 <script setup lang="ts">
 import { DOWNLOAD, LOGIN } from "@constants/route";
@@ -14,14 +14,14 @@ console.log("home show");
   <div class="container">
     <!-- 头部 -->
     <header>
-      <img src="" alt="" />
+      <img src="logo.png" alt="" />
       <ul>
-        <li>
+        <!-- <li>
           <a href="#">修改主题</a>
-        </li>
-        <li>
+        </li> -->
+        <!-- <li>
           <router-link :to="{ name: DOWNLOAD }">应用下载</router-link>
-        </li>
+        </li> -->
         <li>
           <router-link :to="{ name: LOGIN }">登录</router-link>
         </li>
@@ -190,10 +190,12 @@ console.log("home show");
       .item {
         box-sizing: border-box;
         width: rem(300);
-        padding: rem(20) rem(25);
+        // padding: rem(20) 20px;
+        padding: 20px;
         margin-bottom: rem(35);
-        border: 2px solid map-get($map: $green-colors, $key: 800);
-        border-radius: rem(20);
+        border: 1px solid map-get($map: $green-colors, $key: 800);
+        // border-radius: rem(20);
+        border-radius: 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -259,6 +261,7 @@ console.log("home show");
         p.item-text {
           @include BigFont(20px);
           margin: rem(10) 0;
+          text-align: center;
         }
       }
     }

@@ -4,16 +4,15 @@
  * @Autor: mzc
  * @Date: 2022-08-21 15:20:57
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-05 15:13:32
+ * @LastEditTime: 2023-03-20 16:32:04
 -->
 <script setup lang="ts">
 import { useEvent } from "@/hooks";
 import { getTimeString, Message } from "@/utils/public";
-import { nextTick, reactive, ref, watchEffect } from "vue";
+import { nextTick, reactive, ref, watchEffect, computed } from "vue";
 import Checkbox from "../checkbox/index.vue";
 import SvgIcon from "@components/svg-icon/svg-icon.vue";
 import { ArchiveOutline as ArchiveIcon } from "@vicons/ionicons5";
-import { emit } from "process";
 
 // props
 const props = withDefaults(
@@ -46,7 +45,7 @@ const emits = defineEmits([
   "onRename",
   "onDetails",
   "onDelete",
-  "click",
+  // "click",
   "onChangeImage",
 ]);
 
@@ -229,22 +228,26 @@ const handleChange = () => {
     Message("warning", "请选择图片");
   }
 };
+
+const isSelected = computed(() => {
+  return isHover.value || props.hasSelect;
+});
 </script>
 <template>
   <div
     class="resource-box"
-    :class="props.hasSelect ? 'has-select' : ''"
+    :class="[hasSelect ? 'has-select' : '']"
     ref="myRef"
-    @click="$emit('click')"
     @contextmenu.prevent="handleContextMenu"
   >
+    <!-- @click="$emit('click')" -->
     <div class="content">
-      <ul class="float-fns" v-show="isHover || props.hasSelect">
+      <ul class="float-fns" v-show="isSelected">
         <li>
           <Checkbox
             style="width: 18px; height: 18px"
-            :hasSelect="props.hasSelect"
-            :handleSelect="props.handleSelect"
+            :hasSelect="hasSelect"
+            :handleSelect="handleSelect"
           >
             <template #icon>
               <svg-icon

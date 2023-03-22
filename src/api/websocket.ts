@@ -1,72 +1,52 @@
-/*
- * @Description: 
- * @Version: 
- * @Autor: mzc
- * @Date: 2023-03-01 22:07:45
- * @LastEditors: mzc
- * @LastEditTime: 2023-03-02 21:39:01
- */
-
-import EVENTS from "@constants/events";
-
-const socket : WebSocket = new WebSocket("ws://localhost:8080");
+const socket = new WebSocket("ws://localhost:8000");
 
 socket.onopen = () => {
-  console.log("websocket connect established!!!");
-}
+  console.log(["SOCKET", "HAS OPEN"].join(" "));
+};
 
-socket.onerror = (error) => {
-  console.log(`websocket make error: `,error)
-}
+socket.onclose = function () {
+  console.log(["SOCKET", "CLOSED"].join(" "));
+};
 
-socket.onclose = () => {
-  console.log("websocket connection closed");
-}
+socket.onerror = function () {
+  console.log(["SOCKET", "ERROR"].join(" "));
+};
 
-socket.onmessage = (event) => {
-  const { eventName, ...otherData } = JSON.parse(event.data);
-  eventGroup.get(eventName)?.forEach(action => void action(otherData));
-}
+socket.onmessage = function (data) {
+  const { eventName, ...args } = JSON.parse(data.data);
+  // console.log("eventName: ", eventName);
+  // console.log("callbacks: ", callbacks);
+  // console.log("events: ", callbacks[eventName]);
+  callbacks[eventName]?.forEach((fn: Function) => fn(args));
+};
 
-const eventGroup : Map<string,Function[]> = new Map();
+const callbacks: any = {};
+
+// 添加监听器
+const addListener = (type: string, callback: Function) => {
+  callbacks[type] = callbacks[type]?.concat(callback) ?? [callback];
+};
 
 /**
- * @description: 注册websocket事件
- * @param {string} eventName 事件名称
- * @param {Function} callBack 回调函数
+ * @description: 移除监听函数
+ * @param {string} type
+ * @param {Function} func
  * @return {*}
  * @author: mzc
  */
-export const registerSocketEventListener = (eventName: string, callBack: Function) => {
-  if (!EVENTS.includes(eventName)) {
-    return;
-  }
-  const jobLists = eventGroup.get(eventName) ?? [];
-  jobLists.push(callBack);
-  eventGroup.set(eventName, jobLists);
-}
+const removeListener = (type: string, func?: Function) => {
+  let deleteFun = func;
+  let all = func ? false : true;
+  callbacks[type].forEach((func: Function, index: number) => {
+    if (all || func === deleteFun) {
+      callbacks[type].splice(index, 1);
+    }
+  });
+};
 
-/**
- * @description: 触发事件
- * @param {string} eventName 事件名称
- * @param {Object} sendData 发送得数据
- * @return {*}
- * @author: mzc
- */
-export const dispatchSocketEvent = (eventName: string, sendData: Object ) => {
-  let tokenObj = localStorage.getItem("user-store")
-  if (!tokenObj) {
-    socket.close();
-    return;
-  }
-  socket.send(JSON.stringify({
-    eventName,
-    token: JSON.parse(tokenObj).token,
-    ...sendData
-  }))
-}
+// 发送数据
+const sendData = (data: any) => {
+  socket.send(JSON.stringify(data));
+};
 
-
-
-
-export default socket;
+export { addListener, sendData, removeListener };

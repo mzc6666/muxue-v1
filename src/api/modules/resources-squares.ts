@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2023-03-05 16:43:28
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-06 00:05:23
+ * @LastEditTime: 2023-03-08 16:53:55
  */
 import { get } from "@apis/request";
 
@@ -17,7 +17,7 @@ import { get } from "@apis/request";
 export const getHomeResourcesList = (events: Events = {}) => {
   return get(
     {
-      url: "/resource-square",
+      url: "/resource/resource-square",
     },
     events
   );
@@ -33,7 +33,7 @@ export const getHomeResourcesList = (events: Events = {}) => {
 export const getResourcesBySearch = (keyword: string, events: Events = {}) => {
   return get(
     {
-      url: "/resource-square/search",
+      url: "/resource/resource-square/search",
       params: {
         keyword,
       },
@@ -51,7 +51,7 @@ export const getResourcesBySearch = (keyword: string, events: Events = {}) => {
 export const getRankResourcesList = (events: Events = {}) => {
   return get(
     {
-      url: "/resource-square/search",
+      url: "/resource/resource-square-ranks",
     },
     events
   );

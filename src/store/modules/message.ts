@@ -1,68 +1,77 @@
 /*
- * @Description: 
- * @Version: 
+ * @Description:
+ * @Version:
  * @Autor: mzc
  * @Date: 2023-03-02 14:42:29
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-02 23:39:18
+ * @LastEditTime: 2023-03-16 21:00:15
  */
 /*
  * @Description: 消息Reposity
- * @Version: 
+ * @Version:
  * @Autor: mzc
  * @Date: 2023-03-02 14:42:29
  * @LastEditors: mzc
  * @LastEditTime: 2023-03-02 21:03:04
  */
 import { defineStore } from "pinia";
-import { computed, Ref, ref } from "vue";
+import { computed, reactive, Ref, ref } from "vue";
 import useUserStore from "./user";
+import { sendMessageToFriend } from "@/api/modules/message";
 
-
-const useMessageStore = defineStore("message", () => {
-
-  const userStore = useUserStore();
-  
-  const currentChatPersonId = ref(0); // 当前正在聊天得好友得ID
-  // 设置标志位表示当前聊天得好友得ID
-  const setCurrentChaptPersonId = (id: number) => void (currentChatPersonId.value = id);
-  
-  // 当前群聊的ID
-  const currentChatGroupId = ref(0);
-
-  const setCurrentChaptGroupId = (id: number) => void (currentChatGroupId.value = id);
-
-  // 好友消息记录列表
-  const friendChattingRecord : Ref<any> = ref({});
-  
-
-
-
-  // 添加好友消息
-  const addMessageToReposity = (data: ChattingPersonItem) => {
-    console.log("[WEBSOCKET MESSAGE]: ", data);
-    const id = data.sender.userId;
-    friendChattingRecord.value[id] = (friendChattingRecord.value[id] ?? []).concat(data);
-  }
-
-  return {
-    currentChatPersonId,
-    setCurrentChaptPersonId,
-    currentChatGroupId,
-    setCurrentChaptGroupId,
-    friendChattingRecord,
-    addMessageToReposity
-  }
-},{
-  persist: {
-    enabled: true,
-    strategies: [
-      {
-        paths: ['friendChattingRecord'],
-        storage: localStorage
+const useMessageStore = defineStore(
+  "message",
+  () => {
+    const userStore = useUserStore();
+    const userId = userStore.userInfo.id;
+    // 消息内容
+    const records = reactive<any>({});
+    // 接收消息
+    const handleMessageArrived = (data: ChattingPersonItem) => {
+      const friendInfo =
+        data.sender.userId === userId ? data.receiver : data.sender;
+      if (records[friendInfo.userId]) {
+        if (lookId.value === friendInfo.userId) {
+          records[friendInfo.userId].unRead = 0;
+        } else {
+          records[friendInfo.userId].unRead += 1;
+        }
+        records[friendInfo.userId].messages.push(data);
+      } else {
+        records[friendInfo.userId] = {
+          unRead: 1,
+          messages: [data],
+          info: friendInfo,
+        };
       }
-    ]
+    };
+
+    // 当前查看的好友ID
+    const lookId = ref(-1);
+    const setLookId = (id: number) => {
+      lookId.value = id;
+      records[lookId.value].unRead = 0;
+    };
+
+    return {
+      sendMessageToFriend,
+      handleMessageArrived,
+      records,
+      lookId,
+      setLookId,
+    };
+  },
+  {
+    persist: {
+      enabled: true,
+      strategies: [
+        {
+          paths: ["friendChattingRecord"],
+          storage: localStorage,
+        },
+      ],
+    },
   }
-})
+);
 
 export default useMessageStore;
