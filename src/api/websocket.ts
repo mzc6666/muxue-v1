@@ -1,4 +1,12 @@
-const socket = new WebSocket("ws://localhost:8000");
+/*
+ * @Description:
+ * @Version:
+ * @Autor: mzc
+ * @Date: 2023-03-01 22:07:45
+ * @LastEditors: mzc
+ * @LastEditTime: 2023-04-12 12:25:40
+ */
+const socket = new WebSocket("ws://localhost:8001");
 
 socket.onopen = () => {
   console.log(["SOCKET", "HAS OPEN"].join(" "));

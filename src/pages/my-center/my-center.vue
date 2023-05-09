@@ -4,6 +4,7 @@ import { MdSave } from "@vicons/ionicons4";
 import { ArchiveOutline as ArchiveIcon } from "@vicons/ionicons5";
 import { ref, reactive } from "vue";
 import { changeUserInfo } from "@/api/modules/user";
+import { Message } from "@/utils/public";
 
 const userStore = useUserStore();
 
@@ -30,10 +31,14 @@ const handleChange = async () => {
   try {
     const result = await changeUserInfo(obj);
     if ((result.data.code = "200")) {
+      Message("success", "修改成功");
       userStore.getInfoOfUser();
     }
   } catch (error) {
     console.log("handleChange error: ", error);
+  } finally {
+    password.value = "";
+    confirmPassword.value = "";
   }
   change_visible.value = false;
 };
@@ -170,7 +175,16 @@ const handleChange = async () => {
         <template #footer>
           <div class="button-groups">
             <n-button type="primary" @click="handleChange"> 确定 </n-button
-            ><n-button type="error" @click="change_visible = false">
+            ><n-button
+              type="error"
+              @click="
+                () => {
+                  change_visible = false;
+                  password = '';
+                  confirmPassword = '';
+                }
+              "
+            >
               取消
             </n-button>
           </div>

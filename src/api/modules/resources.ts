@@ -18,6 +18,7 @@ export const getUserTopResources = (events: Events = {}) => {
   return get(
     {
       url: "/resource/list",
+      // url: "http://localhost:8000/resource/list",
     },
     events
   );
@@ -35,6 +36,7 @@ export const getResourceContent = (id: number, events: Events = {}) => {
   return get(
     {
       url: "/resource/content",
+      // url: "http://localhost:8000/resource/content",
       params: {
         id,
       },
@@ -204,6 +206,7 @@ export const getFolderContent = (id: number, events: Events = {}) => {
   return get(
     {
       url: "/resource/folder/content",
+      // url: "http://localhost:8000/resource/folder/content",
       params: {
         id,
       },

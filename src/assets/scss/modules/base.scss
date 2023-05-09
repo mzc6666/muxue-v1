@@ -79,3 +79,24 @@ $error-colors: (
   800: #991b1b,
   900: #7f1d1d,
 );
+
+@mixin standroid-translate($left: -50%, $top: -50%) {
+  transform: translate($left, $top);
+  -ms-transform: translate($left, $top);
+  /* IE 9 */
+  -moz-transform: translate($left, $top);
+  /* Firefox */
+  -webkit-transform: translate($left, $top);
+  /* Safari 和 Chrome */
+  -o-transform: translate($left, $top);
+}
+
+@mixin wrap-ellipse($lineCount: 1) {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lineCount;
+  line-clamp: $lineCount;
+}

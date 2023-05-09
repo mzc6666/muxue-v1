@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-22 16:00:08
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-03 10:40:54
+ * @LastEditTime: 2023-04-12 17:54:39
 -->
 <script setup lang="ts">
 import { getTimeString } from "@/utils/public";
@@ -34,6 +34,7 @@ const emits = defineEmits([
   "onRename",
   "onDetails",
   "onDelete",
+  "onOpen",
 ]);
 
 const dropDown = reactive({
@@ -154,6 +155,7 @@ const handleContextMenu = (e: any) => {
   <div
     class="file-box"
     @contextmenu.prevent="handleContextMenu"
+    @click.stop="$emit('onOpen')"
     ref="myRef"
     :class="props.hasSelect ? 'has-select' : ''"
   >

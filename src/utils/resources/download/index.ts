@@ -15,5 +15,8 @@
 import { Message } from "@/utils/public";
 
 export const downLoad = () => {
-  Message("error", "Web端暂不支持下载");
+  // Message("error", "Web端暂不支持下载");
+  const a = document.createElement("a");
+  a.href = "http://localhost:8000/简历";
+  a.click();
 };

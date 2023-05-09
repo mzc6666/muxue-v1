@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-04 20:20:06
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-09 13:37:39
+ * @LastEditTime: 2023-04-27 15:34:20
 -->
 <script setup lang="ts">
 import { DOWNLOAD, LOGIN } from "@constants/route";
@@ -16,12 +16,6 @@ console.log("home show");
     <header>
       <img src="logo.png" alt="" />
       <ul>
-        <!-- <li>
-          <a href="#">修改主题</a>
-        </li> -->
-        <!-- <li>
-          <router-link :to="{ name: DOWNLOAD }">应用下载</router-link>
-        </li> -->
         <li>
           <router-link :to="{ name: LOGIN }">登录</router-link>
         </li>
@@ -130,9 +124,9 @@ console.log("home show");
       </div>
     </section>
     <!-- 网站备案 -->
-    <footer>
+    <!-- <footer>
       <p>备案信息</p>
-    </footer>
+    </footer> -->
   </div>
 </template>
 <style lang="scss" scoped>
