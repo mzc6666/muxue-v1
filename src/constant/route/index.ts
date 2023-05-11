@@ -49,3 +49,5 @@ export const MAIN_COMMUNITY_ARTICLE_ADD = "main-community-article-add";
 export const MAIN_COMMUNITY_ARTICLE_DETAIL = "main-community-article-detail";
 
 export const MAIN_MY_CENTER = "main-my-center";
+
+export const NOT_FOUND_404 = "not-found-404";

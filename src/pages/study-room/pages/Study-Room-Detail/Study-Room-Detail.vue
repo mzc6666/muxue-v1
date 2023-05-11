@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2023-03-19 16:56:58
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-19 21:21:18
+ * @LastEditTime: 2023-04-12 22:50:21
 -->
 <script setup lang="ts">
 import { useStudyRoomStore } from "@/store";
@@ -98,16 +98,23 @@ const sendImageFrameData = (data: string) =>
         </div>
       </div>
     </div>
+    <!-- <video
+      src="/video2.mp4"
+      controls
+      autoplay
+      loop
+      style="width: 1000px; height: 600px"
+    ></video> -->
     <div class="person-lists">
-      <div class="person-content">
-        <div
-          v-for="(item, index) in studyRoomStore.personList"
-          :key="item.pId"
-          class="person-item"
-        >
-          <img :src="item.data" alt="" />
-          <span>{{ item.username }}</span>
-        </div>
+      <div class="person-item">
+        <video
+          src="/friends.mp4"
+          controls
+          autoplay
+          style="width: 200px"
+          loop
+        ></video>
+        <span>小潘</span>
       </div>
     </div>
   </div>

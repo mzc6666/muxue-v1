@@ -4,8 +4,13 @@
  * @Autor: mzc
  * @Date: 2022-08-21 15:20:57
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-20 16:32:04
+ * @LastEditTime: 2023-04-12 10:28:56
 -->
+<script lang="ts">
+export default {
+  inheritAttrs: false,
+};
+</script>
 <script setup lang="ts">
 import { useEvent } from "@/hooks";
 import { getTimeString, Message } from "@/utils/public";
@@ -238,6 +243,7 @@ const isSelected = computed(() => {
     class="resource-box"
     :class="[hasSelect ? 'has-select' : '']"
     ref="myRef"
+    v-bind="$attrs"
     @contextmenu.prevent="handleContextMenu"
   >
     <!-- @click="$emit('click')" -->

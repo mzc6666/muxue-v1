@@ -28,7 +28,7 @@ const renderList = computed(() => {
 // 获取评论列表
 getCourseSonComments(topLevelCommentId)
   .then((res) => {
-    // console.log("data: ", res);
+    console.log("data: ", res);
     comments.push(...res.data.data.data);
   })
   .catch((error) => {

@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-28 16:52:47
  * @LastEditors: mzc
- * @LastEditTime: 2023-01-05 22:45:47
+ * @LastEditTime: 2023-04-28 16:38:59
  */
 declare interface PermissionEvents {
   onDownload?: () => void;
@@ -18,11 +18,14 @@ declare interface PermissionEvents {
 }
 
 declare interface ResourceOptions {
+  image: string;
+  isCollection: boolean;
+  isPublic: 0 | 1 | 2; // 0 --> 我的收藏内的资源; 1 --> 非公开;  2 --> 公开
   sId: number;
   sName: string;
   updateTime: string;
-  isPublic: 0 | 1 | 2; // 0 --> 我的收藏内的资源; 1 --> 非公开;  2 --> 公开
   size: number;
+  updateTime: string;
 }
 
 declare interface FolderOptions {

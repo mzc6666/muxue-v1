@@ -4,14 +4,21 @@
  * @Autor: mzc
  * @Date: 2022-08-04 19:31:22
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-02 15:04:19
+ * @LastEditTime: 2023-04-27 16:37:17
  */
 import {
   createRouter,
   createWebHistory,
   createWebHashHistory,
 } from "vue-router";
-import { DOWNLOAD, HOME, LOGIN, MAIN, MAIN_RESOURCE } from "@constants/route";
+import {
+  DOWNLOAD,
+  HOME,
+  LOGIN,
+  MAIN,
+  MAIN_RESOURCE,
+  NOT_FOUND_404,
+} from "@constants/route";
 
 import resources from "./modules/resources";
 import backlog from "./modules/backlog";
@@ -67,8 +74,17 @@ const router = createRouter({
         ...centersRoutes,
       ],
     },
+    {
+      path: "/:param(.*)",
+      name: NOT_FOUND_404,
+      component: () => import("@/pages/404/404.vue"),
+      meta: {
+        title: "404 Not Found",
+      },
+    },
   ],
   history: createWebHistory(),
+  strict: true,
   // history: createWebHashHistory(),
 });
 

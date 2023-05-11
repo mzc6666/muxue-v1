@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-20 15:07:16
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-16 23:18:31
+ * @LastEditTime: 2023-04-12 12:26:46
 -->
 <script setup lang="ts">
 import { useMessageStore, useUserStore } from "@/store";
@@ -45,10 +45,6 @@ const sendMessage = async () => {
 <template>
   <div class="chatting-container">
     <div class="left-section">
-      <div class="add">
-        <span>添加群聊</span>
-        <span>添加好友</span>
-      </div>
       <div
         class="friend-item"
         v-for="(item, index) in Object.keys(messageStore.records)"
@@ -127,17 +123,7 @@ div.chatting-container {
   .left-section {
     width: 300px;
     border-right: 1px solid #e4e4e4;
-    .add {
-      display: flex;
-      .add span {
-        flex: 1;
-        text-align: center;
-        border: 1px solid #e4e4e4;
-        font-size: 14px;
-        line-height: 2;
-        cursor: pointer;
-      }
-    }
+
     .friend-item {
       display: flex;
       align-items: center;

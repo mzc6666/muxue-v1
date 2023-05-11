@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-20 13:34:28
  * @LastEditors: mzc
- * @LastEditTime: 2022-09-07 10:53:54
+ * @LastEditTime: 2023-04-28 16:17:57
  */
 import { RouteRecordRaw } from "vue-router";
 import {
@@ -26,6 +26,7 @@ const resources: RouteRecordRaw[] = [
       {
         path: "",
         name: MAIN_RESOURCE_MYRESOURCE,
+        // component: () => import("@pages/resources/my-resources-v2.vue"),
         component: () => import("@pages/resources/my-resources.vue"),
       },
       {

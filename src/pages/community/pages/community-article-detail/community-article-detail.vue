@@ -44,7 +44,7 @@ const handleCollect = async () => {
         ? data.value.collectionCount--
         : data.value.collectionCount++;
       data.value.isCollect = !data.value.isCollect;
-      Message("success", result.data.msg);
+      Message("success", data.value.isCollect ? "收藏成功" : "取消收藏成功");
     }
   } catch (error) {}
 };

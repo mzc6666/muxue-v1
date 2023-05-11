@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-22 09:38:40
  * @LastEditors: mzc
- * @LastEditTime: 2022-10-04 15:21:36
+ * @LastEditTime: 2023-04-12 18:03:19
 -->
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
@@ -39,6 +39,7 @@ import {
   handleFileDelete,
   deleteEffect,
 } from "@/utils/resources/delete";
+import axios from "axios";
 
 const resourceStore = useResourcesStore();
 
@@ -245,7 +246,22 @@ const handlerFolderDownload = () => {
  */
 
 const handleFileDownload = () => {
-  Message("error", "web端暂时不支持下载");
+  // axios({
+  //   method: "get",
+  //   url: "http://localhost:8000/简历.docx",
+  //   responseType: "blob",
+  // });
+  const a = document.createElement("a");
+  a.href = "http://localhost:8000/简-模板.docx";
+  a.click();
+};
+
+const handleOpen = () => {
+  const a = document.createElement("a");
+  a.download = "http://localhost:8000/简历.pdf";
+  a.href = "http://localhost:8000/简历.pdf";
+  a.target = "_blank";
+  a.click();
 };
 
 /**
@@ -383,6 +399,7 @@ const handleFolderUpload = (files: FileList) => {
                   fileSelects[index] = !fileSelects[index];
                 }
               "
+              @on-open="handleOpen"
               @on-download="handleFileDownload"
               @on-rename="
                 () => {

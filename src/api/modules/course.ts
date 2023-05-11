@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-12-23 18:33:05
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-07 13:17:22
+ * @LastEditTime: 2023-04-12 12:09:01
  */
 import { get, post, Delete } from "../request";
 
@@ -18,6 +18,7 @@ export const getCourseList = (events: Events = {}) => {
   return get(
     {
       url: "/courses",
+      // url: "http://localhost:8000/courses",
     },
     events
   );
@@ -312,7 +313,8 @@ export const getCourseComment = (
 ) => {
   return get(
     {
-      url: "courses/comment/topLevel",
+      // url: "/courses/comment/topLevel",
+      url: "http://localhost:8000/courses/comment/topLevel",
       params: {
         cId,
         time,
@@ -335,7 +337,8 @@ export const getCourseSonComments = (
 ) => {
   return get(
     {
-      url: "/courses/comment/sonLevel",
+      // url: "/courses/comment/sonLevel",
+      url: "http://localhost:8000/courses/comment/sonLevel",
       params: {
         commentId,
       },
@@ -359,7 +362,8 @@ export const makeCommentToCouse = (
 ) => {
   return post(
     {
-      url: "/courses/comment",
+      // url: "/courses/comment",
+      url: "http://localhost:8000/courses/comment",
       data: {
         cId,
         content,
@@ -384,7 +388,8 @@ export const makeCommentToFirstLevel = (
 ) => {
   return post(
     {
-      url: "/courses/comment/reply",
+      // url: "/courses/comment/reply",
+      url: "http://localhost:8000/courses/comment/reply",
       data: {
         commentId,
         content,

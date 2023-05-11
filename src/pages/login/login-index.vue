@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-08-04 19:57:24
  * @LastEditors: mzc
- * @LastEditTime: 2023-03-02 14:17:54
+ * @LastEditTime: 2023-04-27 15:57:11
 -->
 <script setup lang="ts">
 import InputItem from "./components/Input/input.vue";
@@ -135,9 +135,6 @@ const handleBtnClick = () => {
         <li :class="[tagIndex === 1 ? 'active' : '']" @click="tagIndex = 1">
           账号登录
         </li>
-        <!-- <li :class="[tagIndex === 2 ? 'active' : '']" @click="tagIndex = 2">
-          扫码登录
-        </li> -->
       </ul>
       <!-- forms -->
       <div class="forms">
@@ -206,14 +203,6 @@ const handleBtnClick = () => {
               >
               <span class="forget">忘记密码</span>
             </div>
-          </section>
-          <!-- 扫码登录 -->
-          <section class="qr-code">
-            <div class="er-wei-ma"></div>
-            <p>使用APP扫码登录</p>
-            <n-checkbox v-model:checked="nextAutoLogin"
-              >下次自动登录</n-checkbox
-            >
           </section>
         </div>
       </div>
