@@ -3,8 +3,8 @@
  * @Version: 
  * @Autor: mzc
  * @Date: 2023-01-05 09:27:09
- * @LastEditors: mzc
- * @LastEditTime: 2023-03-08 13:26:45
+ * @LastEditors: Austral
+ * @LastEditTime: 2023-05-09 20:18:08
 -->
 <script setup lang="ts">
 import { ref, reactive, nextTick, h, render } from "vue";
@@ -22,18 +22,18 @@ import {
   getPrimaryBacklogDetail,
   getTImesBacklogDetail,
 } from "@/api/modules/backlog";
-import { NTag } from "naive-ui";
+import { NTag, NDatePicker } from "naive-ui";
 import { RouterLink } from "vue-router";
 import { MAIN_COURSE_TASKS } from "@constants/route";
 
 const type = ref<"normal" | "times">("normal");
 const options = reactive([
   {
-    label: "普通代办",
+    label: "普通待办",
     value: "normal",
   },
   {
-    label: "次数代办",
+    label: "次数待办",
     value: "times",
   },
 ]);
@@ -105,16 +105,17 @@ const dropdown_info = reactive({
   },
 });
 
-// 添加代办
+// 添加待办
 const add_info = reactive({
   visible: false,
   planName: "",
   taskIds: null,
   planDate: 1,
   tarCount: 1,
+  range: ref<[number, number]>([1183135260000, Date.now()]),
 });
 
-// 修改代办
+// 修改待办
 const change_info = reactive({
   visible: false,
   type: "normal",
@@ -138,8 +139,8 @@ const delete_info = reactive({
 
 const { multipleOptions, handleLoad } = useOptions();
 
-const primaryBacklogs = reactive<SimpleBacklogItem[]>([]); // 普通代办
-const timesBacklogs = reactive<TimesBackLogItem[]>([]); // 时间代办
+const primaryBacklogs = reactive<SimpleBacklogItem[]>([]); // 普通待办
+const timesBacklogs = reactive<TimesBackLogItem[]>([]); // 时间待办
 
 async function getLists() {
   try {
@@ -155,7 +156,7 @@ async function getLists() {
 }
 getLists();
 
-// 完成普通代办
+// 完成普通待办
 const handleCompletePrimaryTask = async (id: number, index: number) => {
   // console.log({ id, index });
   try {
@@ -166,7 +167,7 @@ const handleCompletePrimaryTask = async (id: number, index: number) => {
   } catch (error) {}
 };
 
-// 完成次数代办
+// 完成次数待办
 const handleCompleteTimesTask = async (id: number, index: number) => {
   try {
     const result = await accomplishTimesTask(id);
@@ -176,7 +177,7 @@ const handleCompleteTimesTask = async (id: number, index: number) => {
   } catch (error) {}
 };
 
-// 删除普通代办
+// 删除普通待办
 const handleDeletePrimaryTasks = async (id: number, index: number) => {
   try {
     const result = await deletePrimaryBacklog(id);
@@ -186,7 +187,7 @@ const handleDeletePrimaryTasks = async (id: number, index: number) => {
   } catch (error) {}
 };
 
-// 删除次数代办
+// 删除次数待办
 const handleDeleteTimesTasks = async (id: number, index: number) => {
   try {
     const result = await deleteTimesBacklog(id);
@@ -196,7 +197,7 @@ const handleDeleteTimesTasks = async (id: number, index: number) => {
   } catch (error) {}
 };
 
-// 添加代办
+// 添加待办
 const handleBacklogAdd = async () => {
   if (type.value === "normal") {
     try {
@@ -223,12 +224,12 @@ const handleBacklogAdd = async () => {
 };
 
 /**
- * 删除代办
+ * 删除待办
  */
 const handleDeleteBacklog = () => {
   Dialog("warning", {
     title: "警告",
-    content: "确定删除该代办？",
+    content: "确定删除该待办？",
     positiveText: "确定",
     negativeText: "取消",
     onPositiveClick: async () => {
@@ -252,15 +253,15 @@ const handleDeleteBacklog = () => {
           class="add-tag"
           @click="add_info.visible = true"
         >
-          添加代办
+          添加待办
         </n-tag>
       </div>
     </header>
-    <!-- 所有代办 -->
+    <!-- 所有待办 -->
     <div class="backlogs-list-container">
       <div class="left-primary-backlogs">
         <div class="primary-backlogs-container">
-          <h2>普通代办</h2>
+          <h2>普通待办</h2>
           <BacklogItem
             v-for="(item, index) in primaryBacklogs"
             :key="item.pId"
@@ -278,7 +279,7 @@ const handleDeleteBacklog = () => {
       </div>
       <div class="right-times-backlogs">
         <div class="times-backlogs-container">
-          <h2>次数习惯代办</h2>
+          <h2>习惯待办</h2>
           <BacklogItem
             v-for="(item, index) in timesBacklogs"
             :key="item.pId"
@@ -299,7 +300,7 @@ const handleDeleteBacklog = () => {
         </div>
       </div>
     </div>
-    <!-- 添加代办 -->
+    <!-- 添加待办 -->
     <n-modal v-model:show="add_info.visible">
       <n-card
         style="width: 600px"
@@ -310,18 +311,24 @@ const handleDeleteBacklog = () => {
       >
         <template #header>
           <div>
-            <div style="line-height: 3">添加代办</div>
-            <n-select v-model:value="type" :options="options" />
+            <div style="line-height: 3">添加待办</div>
+            <n-select
+              v-model:value="type"
+              :options="options"
+            />
           </div>
         </template>
         <n-form>
-          <n-form-item label="代办名称">
+          <n-form-item label="待办名称">
             <n-input
               v-model:value="add_info.planName"
-              placeholder="请输入代办的名称"
+              placeholder="请输入待办的名称"
             />
           </n-form-item>
-          <n-form-item label="代办任务点" v-show="type === 'normal'">
+          <n-form-item
+            label="待办任务点"
+            v-show="type === 'normal'"
+          >
             <n-cascader
               v-model:value="add_info.taskIds"
               multiple
@@ -334,43 +341,70 @@ const handleDeleteBacklog = () => {
               :on-load="handleLoad"
             />
           </n-form-item>
-          <n-form-item label="习惯代办天数" v-show="type === 'times'">
+          <n-form-item
+            label="待办时间段" 
+            v-show="type==='times'"
+          >
+            <n-date-picker
+              v-model:value="range"
+              type="daterange"
+              clearable
+            />
+          </n-form-item>
+          <n-form-item
+            label="习惯待办天数"
+            v-show="type === 'times'"
+          >
             <!-- <n-input
               v-model:value="backlog_info.planDate"
-              placeholder="请输入代办期望完成天数"
+              placeholder="请输入待办期望完成天数"
             /> -->
-            <n-input-number v-model:value="add_info.planDate" clearable />
+            <n-input-number
+              v-model:value="add_info.planDate"
+              clearable
+            />
           </n-form-item>
-          <n-form-item label="习惯代办完成次数" v-show="type === 'times'">
+          <n-form-item
+            label="习惯待办完成次数"
+            v-show="type === 'times'"
+          >
             <!-- <n-input
               v-model:value="backlog_info.tarCount"
-              placeholder="请输入代办期望完成次数"
+              placeholder="请输入待办期望完成次数"
             /> -->
-            <n-input-number v-model:value="add_info.tarCount" clearable />
+            <n-input-number
+              v-model:value="add_info.tarCount"
+              clearable
+            />
           </n-form-item>
         </n-form>
         <template #footer>
           <div class="button-groups">
-            <n-button type="primary" @click="handleBacklogAdd"> 确定 </n-button
-            ><n-button type="error" @click="add_info.visible = false">
+            <n-button
+              type="primary"
+              @click="handleBacklogAdd"
+            > 确定 </n-button><n-button
+              type="error"
+              @click="add_info.visible = false"
+            >
               取消
             </n-button>
           </div>
         </template>
       </n-card>
     </n-modal>
-    <!-- 查看代办详情 -->
+    <!-- 查看待办详情 -->
     <n-modal v-model:show="detail_info.visible">
       <n-card
         style="width: 600px"
-        title="代办详情"
+        title="待办详情"
         size="huge"
         role="dialog"
         aria-modal="true"
       >
         <n-row :gutter="[12, 8]">
           <n-col :span="5">
-            <div>代办名称:</div>
+            <div>待办名称:</div>
           </n-col>
           <n-col :span="18">{{ detail_info.detailInfo.name }} </n-col>
         </n-row>
@@ -378,8 +412,7 @@ const handleDeleteBacklog = () => {
           <n-col :span="5">
             <div>是否完成:</div>
           </n-col>
-          <n-col :span="18"
-            >{{ detail_info.detailInfo.isFinished ? "已完成" : "未完成" }}
+          <n-col :span="18">{{ detail_info.detailInfo.isFinished ? "已完成" : "未完成" }}
           </n-col>
         </n-row>
         <n-row :gutter="[12, 8]">
@@ -388,35 +421,50 @@ const handleDeleteBacklog = () => {
           </n-col>
           <n-col :span="18">{{ detail_info.detailInfo.createTime }} </n-col>
         </n-row>
-        <n-row :gutter="[12, 8]" v-if="detail_info.detailInfo.finishTime">
+        <n-row
+          :gutter="[12, 8]"
+          v-if="detail_info.detailInfo.finishTime"
+        >
           <n-col :span="5">
             <div>完成时间:</div>
           </n-col>
           <n-col :span="18">{{ detail_info.detailInfo.finishTime }} </n-col>
         </n-row>
 
-        <n-row :gutter="[12, 8]" v-if="detail_info.detailInfo.lastFinishTime">
+        <n-row
+          :gutter="[12, 8]"
+          v-if="detail_info.detailInfo.lastFinishTime"
+        >
           <n-col :span="5">
             <div>上次完成时间:</div>
           </n-col>
           <n-col :span="18">{{ detail_info.detailInfo.lastFinishTime }} </n-col>
         </n-row>
 
-        <n-row :gutter="[12, 8]" v-if="detail_info.detailInfo.finishCount">
+        <n-row
+          :gutter="[12, 8]"
+          v-if="detail_info.detailInfo.finishCount"
+        >
           <n-col :span="5">
             <div>已完成次数:</div>
           </n-col>
           <n-col :span="18">{{ detail_info.detailInfo.finishCount }} </n-col>
         </n-row>
 
-        <n-row :gutter="[12, 8]" v-if="detail_info.detailInfo.totalCount">
+        <n-row
+          :gutter="[12, 8]"
+          v-if="detail_info.detailInfo.totalCount"
+        >
           <n-col :span="5">
             <div>总次数:</div>
           </n-col>
           <n-col :span="18">{{ detail_info.detailInfo.totalCount }} </n-col>
         </n-row>
 
-        <n-row :gutter="[12, 8]" v-if="detail_info.detailInfo.tasks">
+        <n-row
+          :gutter="[12, 8]"
+          v-if="detail_info.detailInfo.tasks"
+        >
           <n-col :span="5">
             <div>任务点:</div>
           </n-col>
@@ -440,7 +488,7 @@ const handleDeleteBacklog = () => {
         </n-row>
       </n-card>
     </n-modal>
-    <!-- 修改代办 -->
+    <!-- 修改待办 -->
     <!-- DropDown -->
     <n-dropdown
       placement="bottom-start"

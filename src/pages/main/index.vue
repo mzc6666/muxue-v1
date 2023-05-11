@@ -44,9 +44,13 @@ const handleExit = () => {
     <nav>
       <article class="left-top">
         <section class="logo">
-          <img src="/logo.png" alt="" />
+          <img
+            src="/logo.png"
+            alt=""
+          />
         </section>
         <ul>
+          <!-- 我的资源 -->
           <li>
             <router-link
               :to="{ name: MAIN_RESOURCE_MYRESOURCE }"
@@ -66,6 +70,47 @@ const handleExit = () => {
               </a>
             </router-link>
           </li>
+          <!-- 资源广场 -->
+          <li>
+            <router-link
+              :to="{ name: MAIN_RESOURCESQUARE }"
+              custom
+              v-slot="{ isActive, navigate, href }"
+            >
+              <a
+                :href="href"
+                @click="navigate"
+                :class="[isActive ? 'active' : 'no-active', 'route-a']"
+              >
+                <svg-icon
+                  className="icon-ziyuan"
+                  class="item-icon"
+                ></svg-icon>
+                <span class="item-text">资源广场</span>
+              </a>
+            </router-link>
+          </li>
+          <!-- 课程资源 -->
+          <li>
+            <router-link
+              :to="{ name: MAIN_COURSE }"
+              custom
+              v-slot="{ isActive, navigate, href }"
+            >
+              <a
+                :href="href"
+                @click="navigate"
+                :class="[isActive ? 'active' : 'no-active', 'route-a']"
+              >
+                <svg-icon
+                  className="icon-wodekecheng"
+                  class="item-icon"
+                ></svg-icon>
+                <span class="item-text">课程资源</span>
+              </a>
+            </router-link>
+          </li>
+          <!-- 待办计划 -->
           <li>
             <router-link
               :to="{ name: MAIN_BACKLOG }"
@@ -85,41 +130,7 @@ const handleExit = () => {
               </a>
             </router-link>
           </li>
-          <li>
-            <router-link
-              :to="{ name: MAIN_CHATTING }"
-              custom
-              v-slot="{ isActive, navigate, href }"
-            >
-              <a
-                :href="href"
-                @click="navigate"
-                :class="[isActive ? 'active' : 'no-active', 'route-a']"
-              >
-                <svg-icon className="icon-xueyuan" class="item-icon"></svg-icon>
-                <span class="item-text">聊天</span>
-              </a>
-            </router-link>
-          </li>
-          <li>
-            <router-link
-              :to="{ name: MAIN_COURSE }"
-              custom
-              v-slot="{ isActive, navigate, href }"
-            >
-              <a
-                :href="href"
-                @click="navigate"
-                :class="[isActive ? 'active' : 'no-active', 'route-a']"
-              >
-                <svg-icon
-                  className="icon-wodekecheng"
-                  class="item-icon"
-                ></svg-icon>
-                <span class="item-text">课程</span>
-              </a>
-            </router-link>
-          </li>
+          <!-- 自习室 -->
           <li>
             <router-link
               :to="{ name: MAIN_STUDYROOM }"
@@ -135,13 +146,14 @@ const handleExit = () => {
                   className="icon-xueyuan-xuexizhong"
                   class="item-icon"
                 ></svg-icon>
-                <span class="item-text">自习室</span>
+                <span class="item-text">自   习   室</span>
               </a>
             </router-link>
           </li>
+          <!-- 互动聊天 -->
           <li>
             <router-link
-              :to="{ name: MAIN_RESOURCESQUARE }"
+              :to="{ name: MAIN_CHATTING }"
               custom
               v-slot="{ isActive, navigate, href }"
             >
@@ -150,11 +162,15 @@ const handleExit = () => {
                 @click="navigate"
                 :class="[isActive ? 'active' : 'no-active', 'route-a']"
               >
-                <svg-icon className="icon-ziyuan" class="item-icon"></svg-icon>
-                <span class="item-text">资源广场</span>
+                <svg-icon
+                  className="icon-xueyuan"
+                  class="item-icon"
+                ></svg-icon>
+                <span class="item-text">互动聊天</span>
               </a>
             </router-link>
           </li>
+          <!-- 学习社区 -->
           <li>
             <router-link
               :to="{ name: MAIN_COMMUNITY }"
@@ -166,11 +182,15 @@ const handleExit = () => {
                 @click="navigate"
                 :class="[isActive ? 'active' : 'no-active', 'route-a']"
               >
-                <svg-icon className="icon-shequ" class="item-icon"></svg-icon>
-                <span class="item-text">社区</span>
+                <svg-icon
+                  className="icon-shequ"
+                  class="item-icon"
+                ></svg-icon>
+                <span class="item-text">学习社区</span>
               </a>
             </router-link>
           </li>
+          <!-- 我的中心 -->
           <li>
             <router-link
               :to="{ name: MAIN_MY_CENTER }"
@@ -182,7 +202,10 @@ const handleExit = () => {
                 @click="navigate"
                 :class="[isActive ? 'active' : 'no-active', 'route-a']"
               >
-                <svg-icon className="icon-shequ" class="item-icon"></svg-icon>
+                <svg-icon
+                  className="icon-shequ"
+                  class="item-icon"
+                ></svg-icon>
                 <span class="item-text">我的中心</span>
               </a>
             </router-link>
@@ -196,13 +219,20 @@ const handleExit = () => {
           @select="handleExit"
         >
           <div class="tag-info">
-            <n-avatar round size="medium" :src="userStore.userInfo.avatar" />
+            <n-avatar
+              round
+              size="medium"
+              :src="userStore.userInfo.avatar"
+            />
             <span class="username">{{ userStore.userInfo.username }}</span>
           </div>
         </n-dropdown>
       </section>
     </nav>
-    <router-view class="router-view" v-slot="{ Component }">
+    <router-view
+      class="router-view"
+      v-slot="{ Component }"
+    >
       <keep-alive>
         <component :is="Component" />
       </keep-alive>

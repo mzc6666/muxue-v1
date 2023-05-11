@@ -3,8 +3,8 @@
  * @Version:
  * @Autor: mzc
  * @Date: 2022-08-04 21:11:37
- * @LastEditors: mzc
- * @LastEditTime: 2023-03-02 14:39:16
+ * @LastEditors: Austral
+ * @LastEditTime: 2023-04-18 18:32:02
  */
 import axios, { Axios, AxiosRequestConfig } from "axios";
 import {
@@ -30,7 +30,7 @@ export const request = function (config: AxiosRequestConfig, events: Events) {
   instances.interceptors.request.use(
     function (config: any) {
       // 添加token
-      config.headers.token = localStorage.getItem("token") ?? '';
+      config.headers.token = localStorage.getItem("token") ?? "";
       return config;
     },
     function (err) {

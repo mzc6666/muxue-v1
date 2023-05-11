@@ -9,7 +9,7 @@
 import { Delete, get, post, put } from "@apis/request";
 
 /**
- * @description: 获取代办列表
+ * @description: 获取待办列表
  * @param {Events} events 事件对象
  * @returns
  */
@@ -23,8 +23,8 @@ export const getBackLogList = (events: Events = {}) => {
 };
 
 /**
- * @description: 完成普通代办
- * @param {number} planId 代办ID
+ * @description: 完成普通待办
+ * @param {number} planId 待办ID
  * @param {Events} events 事件对象
  * @return {*}
  * @author: mzc
@@ -42,7 +42,7 @@ export const accomplishPrimaryTask = (planId: number, events: Events = {}) => {
 };
 
 /**
- * @description: 完成次数代办
+ * @description: 完成次数待办
  * @param {number} planId ID
  * @param {Events} events 事件对象
  * @returns
@@ -60,7 +60,7 @@ export const accomplishTimesTask = (planId: number, events: Events = {}) => {
 };
 
 /**
- * @description: 删除普通代办
+ * @description: 删除普通待办
  * @param {number} planId ID
  * @param {Events} events 事件对象
  * @returns
@@ -78,7 +78,7 @@ export const deletePrimaryBacklog = (planId: number, events: Events = {}) => {
 };
 
 /**
- * @description: 删除次数代办
+ * @description: 删除次数待办
  * @param {number} planId ID
  * @param {Events} events 事件对象
  * @returns
@@ -96,8 +96,8 @@ export const deleteTimesBacklog = (planId: number, events: Events = {}) => {
 };
 
 /**
- * @description: 新建普通代办
- * @param {string} planName 代办名称
+ * @description: 新建普通待办
+ * @param {string} planName 待办名称
  * @param {number[] | null} taskIds 任务点ID
  * @return {*}
  * @author: mzc
@@ -120,8 +120,8 @@ export const addPrimaryTask = (
 };
 
 /**
- * @description: 新建次数代办
- * @param {string} planName 代办名称
+ * @description: 新建次数待办
+ * @param {string} planName 待办名称
  * @param {number} planDate 日期
  * @param {number} tarCount 完成次数
  * @return {*}
@@ -147,9 +147,9 @@ export const addTimesTask = (
 };
 
 /**
- * @description: 修改普通代办
- * @param {number} planId 代办ID
- * @param {string} planName 代办名称
+ * @description: 修改普通待办
+ * @param {number} planId 待办ID
+ * @param {string} planName 待办名称
  * @param {number[] | null} taskIds 任务点ID
  * @return {*}
  * @author: mzc
@@ -174,9 +174,9 @@ export const changePrimaryBacklog = (
 };
 
 /**
- * @description: 修改次数代办
- * @param {number} planId 代办ID
- * @param {string} planName 代办名称
+ * @description: 修改次数待办
+ * @param {number} planId 待办ID
+ * @param {string} planName 待办名称
  * @param {number} planDate 时间
  * @param {number} tarCount 次数
  * @return {*}
@@ -204,8 +204,8 @@ export const changeTimesBacklog = (
 };
 
 /**
- * @description: 获取普通代办详情
- * @param {number} pId 代办ID
+ * @description: 获取普通待办详情
+ * @param {number} pId 待办ID
  * @param {Events} events
  * @return {*}
  * @author: mzc
@@ -223,8 +223,8 @@ export const getPrimaryBacklogDetail = (pId: number, events: Events = {}) => {
 };
 
 /**
- * @description: 获取次数代办详情
- * @param {number} pId 代办ID
+ * @description: 获取次数待办详情
+ * @param {number} pId 待办ID
  * @param {Events} events
  * @return {*}
  * @author: mzc

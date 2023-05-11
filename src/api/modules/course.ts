@@ -24,6 +24,36 @@ export const getCourseList = (events: Events = {}) => {
 };
 
 /**
+ * @description: 获取发布课程列表
+ * @param {Events} events 事件对象
+ * @return {Promise}
+ * @author: mzc
+ */
+export const getCourseListPublish = (events: Events = {}) => {
+  return get(
+    {
+      url: "/coursesPublish",
+    },
+    events
+  );
+};
+
+/**
+ * @description: 获取公开课列表
+ * @param {Events} events 事件对象
+ * @return {Promise}
+ * @author: mzc
+ */
+export const getCourseListOpen = (events: Events = {}) => {
+  return get(
+    {
+      url: "/coursesOpen",
+    },
+    events
+  );
+};
+
+/**
  * @description: 新建课程
  * @param { string } name 课程名
  * @param { File } coverPic 封面图

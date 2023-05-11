@@ -3,8 +3,8 @@
  * @Version: 
  * @Autor: mzc
  * @Date: 2022-12-23 19:34:44
- * @LastEditors: mzc
- * @LastEditTime: 2023-03-04 17:30:46
+ * @LastEditors: Austral
+ * @LastEditTime: 2023-05-11 14:24:50
 -->
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from "vue";
@@ -26,12 +26,49 @@ const addCourse = reactive({
   image: null,
 });
 
-const { courses, error, waiting, addCourseItem } = useCourseList();
+const changeTab = reactive({
+  show: 0,
+});
+
+const { courses, error, waiting, addCourseItem, coursesPublish, coursesOpen } =
+  useCourseList();
 
 const searchValue = ref<string>(""); // 输入框内容
 
 const renderList = computed(() => {
   return courses.value?.reduce(
+    (
+      total: { data: ClassItem; index: number }[],
+      current: ClassItem,
+      index: number
+    ) => {
+      return searchValue.value === "" ||
+        current.cName.indexOf(searchValue.value) !== -1
+        ? total.concat({ data: current, index })
+        : total;
+    },
+    [] as { data: ClassItem; index: number }[]
+  );
+});
+
+const renderListPublish = computed(() => {
+  return coursesPublish.value?.reduce(
+    (
+      total: { data: ClassItem; index: number }[],
+      current: ClassItem,
+      index: number
+    ) => {
+      return searchValue.value === "" ||
+        current.cName.indexOf(searchValue.value) !== -1
+        ? total.concat({ data: current, index })
+        : total;
+    },
+    [] as { data: ClassItem; index: number }[]
+  );
+});
+
+const renderListOpen = computed(() => {
+  return coursesOpen.value?.reduce(
     (
       total: { data: ClassItem; index: number }[],
       current: ClassItem,
@@ -91,7 +128,34 @@ const handleCreateNewCourse = () => {
 </script>
 <template>
   <div>
-    <div class="container" v-if="courses">
+    <div>
+      <div class="tab">
+        <n-button
+          class="btn"
+          strong
+          secondary
+          type="primary"
+          @click="changeTab.show = 0"
+        >我发布的</n-button>
+        <n-button
+          strong
+          secondary
+          type="primary"
+          @click="changeTab.show = 1"
+        >我加入的</n-button>
+        <n-button
+          strong
+          secondary
+          type="primary"
+          @click="changeTab.show = 2"
+        >公开课</n-button>
+      </div>
+    </div>
+    <div
+      class="container"
+      v-if="courses"
+    >
+
       <header>
         <n-input
           class="text"
@@ -112,11 +176,53 @@ const handleCreateNewCourse = () => {
           添加课程
         </n-button>
       </header>
-      <div class="course-lists">
+      <!-- 发布 -->
+      <div
+        class="course-lists"
+        v-if="changeTab.show === 0"
+      >
+        <div class="lists-content">
+          <div
+            class="class-item"
+            v-for="item in renderListPublish"
+            :key="item.data.cId"
+          >
+            <!-- <span>删除</span> -->
+            <course-item
+              v-bind="item.data"
+              @click="navigateToDetailPage(item.data.cId)"
+            />
+          </div>
+        </div>
+      </div>
+      <!-- 加入 -->
+      <div
+        class="course-lists"
+        v-if="changeTab.show === 1"
+      >
         <div class="lists-content">
           <div
             class="class-item"
             v-for="item in renderList"
+            :key="item.data.cId"
+          >
+            <!-- <span>删除</span> -->
+            <course-item
+              v-bind="item.data"
+              @click="navigateToDetailPage(item.data.cId)"
+            />
+          </div>
+        </div>
+      </div>
+      <!-- 公开课 -->
+      <div
+        class="course-lists"
+        v-if="changeTab.show === 2"
+      >
+        <div class="lists-content">
+          <div
+            class="class-item"
+            v-for="item in renderListOpen"
             :key="item.data.cId"
           >
             <!-- <span>删除</span> -->
@@ -149,12 +255,18 @@ const handleCreateNewCourse = () => {
             <n-text style="font-size: 16px">
               点击或者拖动文件到该区域来上传
             </n-text>
-            <n-p depth="3" style="margin: 8px 0 0 0">
+            <n-p
+              depth="3"
+              style="margin: 8px 0 0 0"
+            >
               请不要上传敏感数据，比如你的银行卡号和密码，信用卡号有效期和安全码
             </n-p>
           </n-upload-dragger>
         </n-upload>
-        <div class="input" :style="{ marginBottom: '20px' }">
+        <div
+          class="input"
+          :style="{ marginBottom: '20px' }"
+        >
           <Input
             type="text"
             placeholder="输入课程名称"
@@ -166,13 +278,19 @@ const handleCreateNewCourse = () => {
   </div>
 </template>
 <style scoped lang="scss">
+.tab {
+  width: 360px;
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 20px;
+}
 .container {
   // display: flex;
   // flex-direction: column;
   height: 100%;
   overflow-y: auto;
   header {
-    height: 125px;
+    height: 105px;
     padding: 0 rem(25);
     padding-right: rem(50);
     // border-bottom: 1px solid red;

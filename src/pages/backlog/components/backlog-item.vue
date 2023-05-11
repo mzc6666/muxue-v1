@@ -39,7 +39,7 @@ const handleContextMenu = (event: MouseEvent) => {
 const handleDelete = () => {
   Dialog("warning", {
     title: "警告",
-    content: "确定删除该代办？",
+    content: "确定删除该待办？",
     positiveText: "确定",
     negativeText: "取消",
     onPositiveClick: () => emits("onDelete"),

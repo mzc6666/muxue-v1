@@ -43,14 +43,23 @@ const handleChange = async () => {
     <!-- 用户信息 -->
     <div class="header">
       <div class="user-info">
-        <n-avatar round :size="100" :src="userStore.userInfo.avatar" />
+        <n-avatar
+          round
+          :size="100"
+          :src="userStore.userInfo.avatar"
+        />
         <div class="right">
           <p>昵称: {{ userStore.userInfo.username }}</p>
           <p>电话号码: {{ userStore.userInfo.telephone }}</p>
           <p>注册时间: {{ userStore.userInfo.registerDay }}</p>
         </div>
       </div>
-      <n-button strong secondary type="primary" @click="change_visible = true">
+      <n-button
+        strong
+        secondary
+        type="primary"
+        @click="change_visible = true"
+      >
         修改信息
       </n-button>
     </div>
@@ -73,11 +82,11 @@ const handleChange = async () => {
         </n-card>
       </div>
       <div class="backlogs">
-        <n-card title="我的代办">
+        <n-card title="我的待办">
           <div class="content">
             <div class="likes">
               <p class="num-show">{{ userStore.userInfo.backlog.allCount }}</p>
-              <p>代办总数</p>
+              <p>待办总数</p>
             </div>
             <div class="collections">
               <p class="num-show">
@@ -86,21 +95,21 @@ const handleChange = async () => {
               <p>已完成数</p>
             </div>
           </div>
-          <template #footer>
+          <!-- <template #footer>
             <n-statistic
-              label="代办总结"
+              label="待办总结"
               :value="userStore.userInfo.backlog.finishCount"
             >
-              <!-- <template #prefix>
+              <template #prefix>
                 <n-icon>
                   <md-save />
                 </n-icon>
-              </template> -->
+              </template> 
               <template #suffix>
                 / {{ userStore.userInfo.backlog.allCount }}
               </template>
             </n-statistic>
-          </template>
+          </template> -->
         </n-card>
       </div>
       <div class="article">
@@ -119,6 +128,22 @@ const handleChange = async () => {
           </div>
         </n-card>
       </div>
+      <div class="article">
+        <n-card title="自习室">
+          <div class="content">
+            <div class="likes">
+              <p class="num-show">{{ userStore.userInfo.article.likes }} h</p>
+              <p>自习时长</p>
+            </div>
+            <div class="collections">
+              <p class="num-show">
+                {{ userStore.userInfo.article.collections }}
+              </p>
+              <p>自习次数</p>
+            </div>
+          </div>
+        </n-card>
+      </div>
     </div>
     <!-- 修改信息 -->
     <n-modal v-model:show="change_visible">
@@ -132,21 +157,34 @@ const handleChange = async () => {
         <template #header>
           <div>标题</div>
         </template>
-        <n-upload :default-upload="false" :max="1" @change="handleFileSelect">
+        <n-upload
+          :default-upload="false"
+          :max="1"
+          @change="handleFileSelect"
+        >
           <n-upload-dragger>
             <div style="margin-bottom: 12px">
-              <n-icon size="48" :depth="3">
+              <n-icon
+                size="48"
+                :depth="3"
+              >
                 <archive-icon />
               </n-icon>
             </div>
             <n-text style="font-size: 16px">
               点击或者拖动文件到该区域来上传
             </n-text>
-            <n-p depth="3" style="margin: 8px 0 0 0">修改头像 </n-p>
+            <n-p
+              depth="3"
+              style="margin: 8px 0 0 0"
+            >修改头像 </n-p>
           </n-upload-dragger>
         </n-upload>
         <!-- 表单字段 -->
-        <n-form label-placement="top" :label-width="80">
+        <n-form
+          label-placement="top"
+          :label-width="80"
+        >
           <n-form-item label="用户名">
             <n-input v-model:value="username" />
           </n-form-item>
@@ -158,7 +196,10 @@ const handleChange = async () => {
               placeholder="请输入原密码"
             />
           </n-form-item>
-          <n-form-item first label="重复密码">
+          <n-form-item
+            first
+            label="重复密码"
+          >
             <n-input
               v-model:value="confirmPassword"
               auto-complete
@@ -169,8 +210,13 @@ const handleChange = async () => {
         </n-form>
         <template #footer>
           <div class="button-groups">
-            <n-button type="primary" @click="handleChange"> 确定 </n-button
-            ><n-button type="error" @click="change_visible = false">
+            <n-button
+              type="primary"
+              @click="handleChange"
+            > 确定 </n-button><n-button
+              type="error"
+              @click="change_visible = false"
+            >
               取消
             </n-button>
           </div>
