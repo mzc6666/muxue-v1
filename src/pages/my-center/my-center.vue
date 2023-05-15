@@ -86,7 +86,7 @@ const handleChange = async () => {
           </div>
         </n-card>
       </div>
-      <div class="backlogs">
+      <!-- <div class="backlogs">
         <n-card title="我的待办">
           <div class="content">
             <div class="likes">
@@ -99,7 +99,7 @@ const handleChange = async () => {
               </p>
               <p>已完成数</p>
             </div>
-          </div>
+          </div> -->
           <!-- <template #footer>
             <n-statistic
               label="待办总结"
@@ -115,8 +115,8 @@ const handleChange = async () => {
               </template>
             </n-statistic>
           </template> -->
-        </n-card>
-      </div>
+        <!-- </n-card>
+      </div> -->
       <div class="article">
         <n-card title="我的社区">
           <div class="content">

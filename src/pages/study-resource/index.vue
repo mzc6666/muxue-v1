@@ -76,7 +76,6 @@ import {
       margin: 6px 0;
       border-radius: 10px;
       border: #4ade80 solid 1px;
-      border: 1px soild #4ade80;
       padding: 0 30px;
       .route-a {
         display: block;

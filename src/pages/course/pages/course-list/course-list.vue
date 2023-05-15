@@ -4,7 +4,7 @@
  * @Autor: mzc
  * @Date: 2022-12-23 19:34:44
  * @LastEditors: Austral
- * @LastEditTime: 2023-05-11 14:24:50
+ * @LastEditTime: 2023-05-15 22:08:24
 -->
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from "vue";
@@ -128,7 +128,7 @@ const handleCreateNewCourse = () => {
 </script>
 <template>
   <div>
-    <div>
+    <div class="tabBox">
       <div class="tab">
         <n-button
           class="btn"
@@ -150,6 +150,12 @@ const handleCreateNewCourse = () => {
           @click="changeTab.show = 2"
         >公开课</n-button>
       </div>
+      <n-button
+        strong
+        secondary
+        type="primary"
+        @click="addCourse.show = true"
+      >发布公开课</n-button>
     </div>
     <div
       class="container"
@@ -171,9 +177,19 @@ const handleCreateNewCourse = () => {
           strong
           secondary
           type="primary"
+          v-if="changeTab.show === 0||changeTab.show === 2"
           @click="addCourse.show = true"
         >
           添加课程
+        </n-button>
+        <n-button
+          strong
+          secondary
+          type="primary"
+          v-if="changeTab.show === 1 "
+          @click="addCourse.show = true"
+        >
+          搜索
         </n-button>
       </header>
       <!-- 发布 -->
@@ -278,12 +294,21 @@ const handleCreateNewCourse = () => {
   </div>
 </template>
 <style scoped lang="scss">
-.tab {
-  width: 360px;
+.tabBox {
   display: flex;
-  justify-content: space-evenly;
-  margin-top: 20px;
+  justify-content: space-between;
+  margin: 20px 20px 0 0;
+  .tab {
+    width: 360px;
+    display: flex;
+    justify-content: space-evenly;
+  }
+  // .publishOpen {
+  //   border: ;
+  //   margin: 20px 20px 0 0 ;
+  // }
 }
+
 .container {
   // display: flex;
   // flex-direction: column;
