@@ -3,8 +3,8 @@
  * @Version: 
  * @Autor: mzc
  * @Date: 2022-12-23 19:40:40
- * @LastEditors: mzc
- * @LastEditTime: 2022-12-24 22:10:04
+ * @LastEditors: Austral
+ * @LastEditTime: 2023-05-15 10:54:10
 -->
 <script setup lang="ts">
 import { getTimeString } from "@/utils/public/index";
@@ -20,7 +20,10 @@ const props = defineProps<ClassItem>();
 <template>
   <div class="outer-box">
     <div class="content">
-      <img :src="coverPic" alt="sss" />
+      <img
+        :src="coverPic"
+        alt="图片加载中"
+      />
       <p>{{ cName }}</p>
       <div class="create-info">
         <span>{{ creator }}</span>

@@ -50,7 +50,27 @@ const handleExit = () => {
           />
         </section>
         <ul>
-          <!-- 我的资源 -->
+          <!-- 学习资源 -->
+          <li>
+            <router-link
+              :to="{ name: 'studyResource' }"
+              custom
+              v-slot="{ isActive, navigate, href }"
+            >
+              <a
+                :href="href"
+                @click="navigate"
+                :class="[isActive ? 'active' : 'no-active', 'route-a']"
+              >
+                <svg-icon
+                  className="icon-icon-test"
+                  class="item-icon"
+                ></svg-icon>
+                <span class="item-text">学习资源</span>
+              </a>
+            </router-link>
+          </li>
+          <!-- 我的资源
           <li>
             <router-link
               :to="{ name: MAIN_RESOURCE_MYRESOURCE }"
@@ -70,8 +90,8 @@ const handleExit = () => {
               </a>
             </router-link>
           </li>
-          <!-- 资源广场 -->
-          <li>
+           资源广场 -->
+          <!-- <li>
             <router-link
               :to="{ name: MAIN_RESOURCESQUARE }"
               custom
@@ -89,7 +109,7 @@ const handleExit = () => {
                 <span class="item-text">资源广场</span>
               </a>
             </router-link>
-          </li>
+          </li>  -->
           <!-- 课程资源 -->
           <li>
             <router-link
@@ -146,7 +166,7 @@ const handleExit = () => {
                   className="icon-xueyuan-xuexizhong"
                   class="item-icon"
                 ></svg-icon>
-                <span class="item-text">自   习   室</span>
+                <span class="item-text">自 习 室</span>
               </a>
             </router-link>
           </li>

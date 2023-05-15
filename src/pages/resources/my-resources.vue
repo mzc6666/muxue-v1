@@ -3,8 +3,8 @@
  * @Version: 
  * @Autor: mzc
  * @Date: 2022-08-20 13:52:24
- * @LastEditors: mzc
- * @LastEditTime: 2023-03-05 15:31:45
+ * @LastEditors: Austral
+ * @LastEditTime: 2023-05-15 21:31:02
 -->
 <script setup lang="ts">
 import { reactive, ref } from "vue";
@@ -222,7 +222,10 @@ const onPublic = async (id: number, index: number) => {
   <header>
     <div class="records">
       <n-breadcrumb separator=">">
-        <n-breadcrumb-item v-for="(item, index) in records" :key="index">
+        <n-breadcrumb-item
+          v-for="(item, index) in records"
+          :key="index"
+        >
           <router-link
             :to="(item.path as any)"
             class="breadcrumb-route"
@@ -258,7 +261,10 @@ const onPublic = async (id: number, index: number) => {
       </div>
     </div>
     <div class="resource-content">
-      <div class="absolute" @click.stop="cancelSelect">
+      <div
+        class="absolute"
+        @click.stop="cancelSelect"
+      >
         <div class="outer-container">
           <div class="content">
             <ResourceBox
@@ -323,7 +329,10 @@ const onPublic = async (id: number, index: number) => {
     @update:show="detail.show = false"
   />
   <!-- 移动资源 -->
-  <MoveBox type="resource" v-if="move.show" />
+  <MoveBox
+    type="resource"
+    v-if="move.show"
+  />
   <!-- 资源重命名 -->
   <RenameModal
     v-if="rename.show"
@@ -341,12 +350,15 @@ const onPublic = async (id: number, index: number) => {
     @update:show="rename.show = false"
   />
   <!-- 搜索框 -->
-  <SearchModal v-if="searchShow" @update:show="searchShow = false" />
+  <SearchModal
+    v-if="searchShow"
+    @update:show="searchShow = false"
+  />
 </template>
 <style scoped lang="scss">
 header {
   display: flex;
-  height: 125px;
+  height: 100px;
   justify-content: space-between;
   align-items: center;
   padding: 0 rem(50);
@@ -399,7 +411,10 @@ main {
     flex: 1;
     position: relative;
     div.absolute {
-      @include absolute-fullSize;
+      // @include absolute-fullSize;
+      position: absolute;
+      left: 0;
+      top: 0;
       overflow: auto;
       &::-webkit-scrollbar {
         display: none;

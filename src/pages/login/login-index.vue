@@ -3,8 +3,8 @@
  * @Version: 
  * @Autor: mzc
  * @Date: 2022-08-04 19:57:24
- * @LastEditors: mzc
- * @LastEditTime: 2023-04-27 15:57:11
+ * @LastEditors: Austral
+ * @LastEditTime: 2023-05-15 10:14:07
 -->
 <script setup lang="ts">
 import InputItem from "./components/Input/input.vue";
@@ -129,16 +129,25 @@ const handleBtnClick = () => {
     <div class="multi-ways">
       <!-- options -->
       <ul class="tabs">
-        <li :class="[tagIndex === 0 ? 'active' : '']" @click="tagIndex = 0">
+        <li
+          :class="[tagIndex === 0 ? 'active' : '']"
+          @click="tagIndex = 0"
+        >
           短信登录
         </li>
-        <li :class="[tagIndex === 1 ? 'active' : '']" @click="tagIndex = 1">
+        <li
+          :class="[tagIndex === 1 ? 'active' : '']"
+          @click="tagIndex = 1"
+        >
           账号登录
         </li>
       </ul>
       <!-- forms -->
       <div class="forms">
-        <div class="contents" :style="offsetStyle">
+        <div
+          class="contents"
+          :style="offsetStyle"
+        >
           <!-- 验证码登录 -->
           <section class="login-code">
             <input-item
@@ -172,13 +181,9 @@ const handleBtnClick = () => {
             >
               登录
             </button>
-            <n-checkbox v-model:checked="nextAutoLogin"
-              >下次自动登录</n-checkbox
-            >
-            <n-checkbox v-model:checked="autoRegister"
-              >未注册手机登录时会自动创建新账号，我已阅读并
-              同意服务协议和隐私权条款</n-checkbox
-            >
+            <n-checkbox v-model:checked="nextAutoLogin">下次自动登录</n-checkbox>
+            <n-checkbox v-model:checked="autoRegister">未注册手机登录时会自动创建新账号，我已阅读并
+              同意服务协议和隐私权条款</n-checkbox>
           </section>
           <!-- 密码登录 -->
           <section class="login-password">
@@ -198,9 +203,7 @@ const handleBtnClick = () => {
             />
             <button @click="login_pass.handleLogin">登录</button>
             <div>
-              <n-checkbox v-model:checked="nextAutoLogin"
-                >下次自动登录</n-checkbox
-              >
+              <n-checkbox v-model:checked="nextAutoLogin">下次自动登录</n-checkbox>
               <span class="forget">忘记密码</span>
             </div>
           </section>
@@ -268,7 +271,7 @@ const handleBtnClick = () => {
       overflow: hidden;
       div.contents {
         position: relative;
-        width: 300%;
+        width: 200%;
         display: flex;
         text-align: left;
         transition: all 0.5s;

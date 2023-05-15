@@ -3,8 +3,8 @@
  * @Version: 
  * @Autor: mzc
  * @Date: 2022-08-20 13:53:20
- * @LastEditors: mzc
- * @LastEditTime: 2023-03-05 14:09:26
+ * @LastEditors: Austral
+ * @LastEditTime: 2023-05-15 21:18:32
 -->
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
@@ -378,7 +378,10 @@ const handleFolderUpload = (files: FileList) => {
   <header>
     <div class="records">
       <n-breadcrumb separator=">">
-        <n-breadcrumb-item v-for="(item, index) in records" :key="index">
+        <n-breadcrumb-item
+          v-for="(item, index) in records"
+          :key="index"
+        >
           <router-link
             :to="(item.path as any)"
             class="breadcrumb-route"
@@ -427,7 +430,10 @@ const handleFolderUpload = (files: FileList) => {
       </div>
     </div>
     <div class="resource-content">
-      <div class="absolute" @click.stop="cancelAllSelect">
+      <div
+        class="absolute"
+        @click.stop="cancelAllSelect"
+      >
         <div class="outer-container">
           <div class="content">
             <ResourceBox
@@ -586,7 +592,10 @@ const handleFolderUpload = (files: FileList) => {
     "
   />
   <!-- 搜索框 -->
-  <SerachModal v-if="searchShow" @update:show="searchShow = false" />
+  <SerachModal
+    v-if="searchShow"
+    @update:show="searchShow = false"
+  />
 </template>
 <style scoped lang="scss">
 @mixin horizonalFlex {
@@ -652,8 +661,8 @@ main {
       position: absolute;
       left: 0;
       top: 0;
-      width: 100%;
-      height: 100%;
+      // width: 100%;
+      // height: 100%;
       overflow: auto;
       &::-webkit-scrollbar {
         display: none;

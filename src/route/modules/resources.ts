@@ -3,8 +3,8 @@
  * @Version:
  * @Autor: mzc
  * @Date: 2022-08-20 13:34:28
- * @LastEditors: mzc
- * @LastEditTime: 2023-04-28 16:17:57
+ * @LastEditors: Austral
+ * @LastEditTime: 2023-05-15 21:36:57
  */
 import { RouteRecordRaw } from "vue-router";
 import {
@@ -22,6 +22,7 @@ const resources: RouteRecordRaw[] = [
     meta: {
       title: "我的资源",
     },
+    redirect: { name: MAIN_RESOURCE_MYRESOURCE },
     children: [
       {
         path: "",

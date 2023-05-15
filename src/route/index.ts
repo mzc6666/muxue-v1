@@ -3,8 +3,8 @@
  * @Version:
  * @Autor: mzc
  * @Date: 2022-08-04 19:31:22
- * @LastEditors: mzc
- * @LastEditTime: 2023-04-27 16:37:17
+ * @LastEditors: Austral
+ * @LastEditTime: 2023-05-15 20:10:50
  */
 import {
   createRouter,
@@ -28,6 +28,7 @@ import course from "./modules/course";
 import resourceSquare from "./modules/resource-square";
 import studyRoom from "./modules/study-room";
 import centersRoutes from "./modules/center";
+import studyResource from "./modules/study-resource";
 
 const router = createRouter({
   routes: [
@@ -62,14 +63,15 @@ const router = createRouter({
       meta: {
         title: "主页",
       },
-      redirect: { name: MAIN_RESOURCE },
+      redirect: { name: 'studyResource' },
       children: [
-        ...resources,
+        ...studyResource,
+        // ...resources,
+        // ...resourceSquare,
         ...backlog,
         ...chatting,
         ...community,
         ...course,
-        ...resourceSquare,
         ...studyRoom,
         ...centersRoutes,
       ],
